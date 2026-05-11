@@ -1,0 +1,1158 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<link rel="icon" type="image/png" href="https://drive.google.com/uc?export=view&id=1GWFh0nTW3fEbtsdV8cPuIp-2d3YjLmRJ">
+<link rel="apple-touch-icon" href="https://drive.google.com/uc?export=view&id=1GWFh0nTW3fEbtsdV8cPuIp-2d3YjLmRJ">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="theme-color" content="#6B5B45">
+<meta name="apple-mobile-web-app-title" content="DUAVA Nexo">
+<link rel="manifest" href="manifest.json">
+<title>DUAVA Nexo</title>
+    <style>
+        /* ============================================
+           DUAVA NEXO - ESTILOS PRINCIPALES
+           Diseño: Crema/Gris elegante, NO blanco puro
+           Optimizado para celular
+           ============================================ */
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        :root {
+            --crema: #F5F0E8;
+            --crema-oscuro: #E8E0D4;
+            --gris-claro: #9E9A93;
+            --gris-medio: #6B6560;
+            --gris-oscuro: #4A4540;
+            --marron: #8B7355;
+            --marron-oscuro: #6B5B45;
+            --rojo-alerta: #C75B5B;
+            --naranja: #D4A574;
+            --verde: #7A9E7A;
+            --blanco: #FAF8F5;
+            --sombra: rgba(74, 69, 64, 0.15);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--crema);
+            color: var(--gris-oscuro);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* PANTALLA DE LOGIN */
+        .login-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--crema) 0%, var(--crema-oscuro) 100%);
+        }
+
+        .login-logo { font-size: 2.5rem; font-weight: 700; color: var(--marron-oscuro); margin-bottom: 5px; letter-spacing: 2px; }
+        .login-subtitle { font-size: 2.5rem; color: var(--gris-claro); margin-bottom: 40px; font-weight: 400; border-bottom: 3px solid var(--marron);}
+
+        .login-card {
+            background: var(--blanco);
+            border-radius: 20px;
+            padding: 30px 25px;
+            width: 100%;
+            max-width: 360px;
+            box-shadow: 0 10px 40px var(--sombra);
+        }
+
+        .login-card h2 { text-align: center; color: var(--gris-oscuro); margin-bottom: 25px; font-size: 1.3rem; }
+
+        .form-group { margin-bottom: 20px; }
+        .form-group label { display: block; margin-bottom: 8px; color: var(--gris-medio); font-size: 0.9rem; font-weight: 500; }
+        .form-group select, .form-group input {
+            width: 100%; padding: 14px 16px; border: 2px solid var(--crema-oscuro); border-radius: 12px;
+            font-size: 1rem; background: var(--blanco); color: var(--gris-oscuro); transition: all 0.3s; outline: none;
+        }
+        .form-group select:focus, .form-group input:focus { border-color: var(--marron); box-shadow: 0 0 0 3px rgba(139, 115, 85, 0.1); }
+
+        .btn-login {
+            width: 100%; padding: 16px;
+            background: linear-gradient(135deg, var(--marron) 0%, var(--marron-oscuro) 100%);
+            color: white; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 600;
+            cursor: pointer; transition: transform 0.2s; margin-top: 10px;
+        }
+        .btn-login:active { transform: scale(0.98); }
+        .login-error { color: var(--rojo-alerta); text-align: center; margin-top: 15px; font-size: 0.9rem; display: none; }
+
+        /* APP CONTAINER */
+        .app-container { display: none; min-height: 100vh; padding-bottom: 80px; }
+
+        /* HEADER */
+        .app-header {
+            background: linear-gradient(135deg, var(--marron-oscuro) 0%, var(--marron) 100%);
+            color: white; padding: 15px 20px; position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 2px 20px var(--sombra);
+        }
+        .header-top { display: flex; justify-content: space-between; align-items: center; }
+        .header-title { font-size: 1.4rem; font-weight: 700; letter-spacing: 1px; }
+        .header-user { font-size: 0.85rem; opacity: 0.9; display: flex; align-items: center; gap: 8px; }
+        .btn-logout { background: rgba(255,255,255,0.2); border: none; color: white; padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; cursor: pointer; }
+
+        /* NAVEGACIÓN INFERIOR */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0; background: var(--blanco);
+            display: flex; justify-content: space-around; padding: 8px 0;
+            box-shadow: 0 -2px 20px var(--sombra); z-index: 100; border-top: 1px solid var(--crema-oscuro);
+        }
+        .nav-item { display: flex; flex-direction: column; align-items: center; padding: 5px 15px; cursor: pointer; color: var(--gris-claro); transition: all 0.3s; border: none; background: none; font-size: 0.75rem; }
+        .nav-item.active { color: var(--marron); }
+        .nav-item svg { width: 24px; height: 24px; margin-bottom: 3px; }
+
+        /* SECCIONES */
+        .section { display: none; padding: 20px; animation: fadeIn 0.3s ease; }
+        .section.active { display: block; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        .section-title { font-size: 1.5rem; color: var(--gris-oscuro); margin-bottom: 20px; font-weight: 600; }
+
+        /* TARJETAS */
+        .card { background: var(--blanco); border-radius: 16px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 12px var(--sombra); border: 1px solid var(--crema-oscuro); }
+        .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+        .card-title { font-size: 1.1rem; font-weight: 600; color: var(--gris-oscuro); }
+
+        /* BOTONES */
+        .btn { padding: 12px 20px; border: none; border-radius: 10px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn:active { transform: scale(0.97); }
+        .btn-primary { background: linear-gradient(135deg, var(--marron) 0%, var(--marron-oscuro) 100%); color: white; width: 100%; }
+        .btn-success { background: linear-gradient(135deg, var(--verde) 0%, #5A8A5A 100%); color: white; }
+        .btn-danger { background: var(--rojo-alerta); color: white; }
+        .btn-whatsapp { background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); color: white; }
+        .btn-outline { background: transparent; border: 2px solid var(--marron); color: var(--marron); }
+
+        /* FORMULARIOS */
+        .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+        .input-group { margin-bottom: 15px; }
+        .input-group label { display: block; margin-bottom: 6px; color: var(--gris-medio); font-size: 0.85rem; font-weight: 500; }
+        .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 12px 14px; border: 2px solid var(--crema-oscuro); border-radius: 10px; font-size: 1rem; background: var(--blanco); color: var(--gris-oscuro); outline: none; transition: all 0.3s; }
+        .input-group input:focus, .input-group select:focus, .input-group textarea:focus { border-color: var(--marron); box-shadow: 0 0 0 3px rgba(139, 115, 85, 0.1); }
+        .input-group textarea { resize: vertical; min-height: 80px; }
+
+        /* LISTAS Y BUSCADOR */
+        .search-box { position: relative; margin-bottom: 20px; }
+        .search-box input { width: 100%; padding: 14px 45px 14px 16px; border: 2px solid var(--crema-oscuro); border-radius: 12px; font-size: 1rem; background: var(--blanco); outline: none; }
+        .search-box svg { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--gris-claro); }
+
+        .list-item { background: var(--blanco); border-radius: 14px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 8px var(--sombra); border: 1px solid var(--crema-oscuro); cursor: pointer; transition: all 0.2s; }
+        .list-item:active { transform: scale(0.98); }
+        .list-item.alert { border-left: 4px solid var(--rojo-alerta); }
+        .list-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+        .list-item-title { font-weight: 600; color: var(--gris-oscuro); font-size: 1.05rem; }
+        .list-item-subtitle { color: var(--gris-claro); font-size: 0.85rem; }
+
+        .badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
+        .badge-odonto { background: #E3F2FD; color: #1976D2; }
+        .badge-celebraciones { background: #F3E5F5; color: #7B1FA2; }
+        .badge-alert { background: #FFEBEE; color: var(--rojo-alerta); }
+
+        /* PRODUCTOS EN VENTA */
+        .product-item { display: flex; justify-content: space-between; align-items: center; padding: 14px; background: var(--blanco); border-radius: 12px; margin-bottom: 10px; border: 1px solid var(--crema-oscuro); }
+        .product-info h4 { font-size: 1rem; color: var(--gris-oscuro); margin-bottom: 4px; }
+        .product-info .price { color: var(--marron); font-weight: 700; font-size: 1.1rem; }
+        .product-info .stock { font-size: 0.8rem; color: var(--gris-claro); }
+        .product-actions { display: flex; align-items: center; gap: 10px; }
+        .qty-btn { width: 32px; height: 32px; border-radius: 8px; border: 2px solid var(--crema-oscuro); background: var(--blanco); color: var(--gris-oscuro); font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+        .qty-display { font-weight: 700; min-width: 30px; text-align: center; }
+
+        /* CARRITO */
+        .cart-summary { background: var(--blanco); border-radius: 16px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 12px var(--sombra); border: 2px solid var(--marron); }
+        .cart-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--crema-oscuro); }
+        .cart-total { font-size: 1.3rem; font-weight: 700; color: var(--marron-oscuro); text-align: right; margin-top: 10px; padding-top: 10px; border-top: 2px solid var(--crema-oscuro); }
+        .discount-selector { display: flex; gap: 10px; margin: 15px 0; flex-wrap: wrap; }
+        .discount-btn { padding: 8px 16px; border: 2px solid var(--crema-oscuro); background: var(--blanco); border-radius: 8px; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; }
+        .discount-btn.active { background: var(--marron); color: white; border-color: var(--marron); }
+        .discount-custom { display: flex; align-items: center; gap: 8px; }
+        .discount-custom input { width: 70px; padding: 8px; border: 2px solid var(--crema-oscuro); border-radius: 8px; text-align: center; }
+
+        /* MODALES */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(74, 69, 64, 0.6); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
+        .modal-overlay.active { display: flex; }
+        .modal { background: var(--blanco); border-radius: 20px; padding: 25px; width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto; animation: modalIn 0.3s ease; }
+        @keyframes modalIn { from { transform: scale(0.9); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
+        .modal-title { font-size: 1.3rem; font-weight: 600; color: var(--gris-oscuro); }
+        .modal-close { background: none; border: none; font-size: 1.5rem; color: var(--gris-claro); cursor: pointer; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+        .modal-close:active { background: var(--crema); }
+
+        /* HISTORIAL */
+        .timeline { position: relative; padding-left: 30px; }
+        .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: var(--crema-oscuro); }
+        .timeline-item { position: relative; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--crema-oscuro); }
+        .timeline-item::before { content: ''; position: absolute; left: -26px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--marron); border: 3px solid var(--blanco); box-shadow: 0 0 0 2px var(--marron); }
+        .timeline-item.venta::before { background: var(--verde); box-shadow: 0 0 0 2px var(--verde); }
+        .timeline-item.whatsapp::before { background: #25D366; box-shadow: 0 0 0 2px #25D366; }
+        .timeline-item.llamada::before { background: var(--naranja); box-shadow: 0 0 0 2px var(--naranja); }
+        .timeline-date { font-size: 0.8rem; color: var(--gris-claro); margin-bottom: 5px; }
+        .timeline-content { color: var(--gris-oscuro); }
+
+        /* ALERTAS */
+        .alert-banner { background: linear-gradient(135deg, var(--rojo-alerta) 0%, #B54545 100%); color: white; padding: 12px 20px; border-radius: 12px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
+        .alert-count { background: white; color: var(--rojo-alerta); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; }
+
+        /* SINCRONIZACIÓN */
+        .sync-status { position: fixed; top: 70px; right: 15px; padding: 8px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; z-index: 99; transition: all 0.3s; }
+        .sync-online { background: var(--verde); color: white; }
+        .sync-offline { background: var(--naranja); color: white; }
+        .sync-syncing { background: var(--gris-claro); color: white; }
+
+        /* EMPTY STATE */
+        .empty-state { text-align: center; padding: 40px 20px; color: var(--gris-claro); }
+        .empty-state svg { width: 80px; height: 80px; margin-bottom: 15px; opacity: 0.5; }
+
+        /* UTILIDADES */
+        .hidden { display: none !important; }
+        .mt-10 { margin-top: 10px; }
+        .mt-20 { margin-top: 20px; }
+        .mb-10 { margin-bottom: 10px; }
+        .flex { display: flex; }
+        .flex-between { justify-content: space-between; }
+        .items-center { align-items: center; }
+        .gap-10 { gap: 10px; }
+        .w-full { width: 100%; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--crema); }
+        ::-webkit-scrollbar-thumb { background: var(--gris-claro); border-radius: 3px; }
+
+        .loading { display: inline-block; width: 20px; height: 20px; border: 3px solid var(--crema-oscuro); border-top-color: var(--marron); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 380px) {
+            .login-logo { font-size: 2rem; }
+            .section-title { font-size: 1.3rem; }
+            .form-row { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- LOGIN -->
+    <div class="login-screen" id="loginScreen">
+        <div class="login-logo">DUAVA</div>
+        <div class="login-subtitle">Nexo</div>
+        <div class="login-card">
+            <h2>Acceso de Vendedor</h2>
+            <div class="form-group">
+                <label>Vendedor</label>
+                <select id="loginVendedor"><option value="">Selecciona vendedor</option></select>
+            </div>
+            <div class="form-group">
+                <label>Clave</label>
+                <input type="password" id="loginClave" placeholder="Ingresa tu clave">
+            </div>
+            <button class="btn-login" onclick="app.login()">Ingresar</button>
+            <div class="login-error" id="loginError">Clave incorrecta</div>
+        </div>
+    </div>
+
+    <!-- APP -->
+    <div class="app-container" id="appContainer">
+        <div class="app-header">
+            <div class="header-top">
+                <div class="header-title">DUAVA NEXO</div>
+                <div class="header-user">
+                    <span id="userName">Vendedor</span>
+                    <button class="btn-logout" onclick="localStorage.removeItem('duava_sesion'); document.getElementById('appContainer').style.display='none'; document.getElementById('loginScreen').style.display='flex';">Salir</button>
+                </div>
+            </div>
+        </div>
+        <div class="sync-status sync-online" id="syncStatus">● Online</div>
+
+        <!-- CLIENTES -->
+        <div class="section active" id="sectionClientes">
+            <div class="section-title">Clientes</div>
+            <div id="alertasContainer"></div>
+            <div class="search-box">
+                <input type="text" id="searchClientes" placeholder="Buscar cliente..." onkeyup="app.buscarClientes()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
+            </div>
+            <button class="btn btn-primary mb-10" onclick="app.mostrarModalCliente()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Nuevo Cliente
+            </button>
+            <div id="listaClientes"></div>
+        </div>
+
+        <!-- VENTAS -->
+        <div class="section" id="sectionVentas">
+            <div class="section-title">Nueva Venta</div>
+            <div class="card">
+                <div class="input-group">
+                    <label>Cliente</label>
+                    <select id="ventaCliente" onchange="app.seleccionarClienteVenta()"><option value="">Selecciona un cliente</option></select>
+                </div>
+                <div id="infoClienteVenta" class="hidden">
+                    <div class="flex flex-between items-center mt-10">
+                        <span id="clienteVentaNombre"></span>
+                        <button class="btn btn-whatsapp" style="padding:8px 12px;font-size:0.8rem;" onclick="app.abrirWhatsAppCliente('${c.nombre}')">WhatsApp</button>
+                    </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="input-group">
+                    <label>Tienda</label>
+                    <select id="ventaTienda" onchange="app.renderProductosVenta()">
+                        <option value="ODONTO STORE">Odonto Store</option>
+                        <option value="CELEBRACIONES">Celebraciones</option>
+                    </select>
+                </div>
+            </div>
+            <div class="card">
+                <div class="card-header"><div class="card-title">Productos</div></div>
+                <div id="listaProductosVenta"></div>
+            </div>
+            <div class="cart-summary" id="cartSummary" style="display:none;">
+                <div class="card-title mb-10">Resumen</div>
+                <div id="cartItems"></div>
+                <div class="mt-20">
+                    <label style="display:block;margin-bottom:8px;color:var(--gris-medio);font-size:0.9rem;">Descuento</label>
+                    <div class="discount-selector">
+                        <button class="discount-btn active" onclick="app.setDescuento(0)">0%</button>
+                        <button class="discount-btn" onclick="app.setDescuento(3)">3%</button>
+                        <button class="discount-btn" onclick="app.setDescuento(5)">5%</button>
+                        <button class="discount-btn" onclick="app.setDescuento(9)">9%</button>
+                        <div class="discount-custom">
+                            <input type="number" id="descuentoCustom" placeholder="%" min="0" max="100" onchange="app.setDescuentoCustom()">
+                            <span>%</span>
+                        </div>
+                    </div>
+                </div>
+                <div class="cart-total" id="cartTotal">Total: $0.00</div>
+                <button class="btn btn-success w-full mt-10" onclick="app.guardarVenta()">Confirmar Venta</button>
+            </div>
+        </div>
+
+        <!-- SEGUIMIENTO -->
+        <div class="section" id="sectionSeguimiento">
+            <div class="section-title">Seguimiento</div>
+            <div class="search-box">
+                <input type="text" id="searchSeguimiento" placeholder="Buscar cliente..." onkeyup="app.buscarSeguimiento()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
+            </div>
+            <button class="btn btn-primary mb-10" onclick="app.mostrarModalSeguimiento()">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                Nuevo Seguimiento
+            </button>
+            <div id="listaSeguimiento"></div>
+        </div>
+
+        <!-- PRODUCTOS -->
+        <div class="section" id="sectionProductos">
+            <div class="section-title">Productos</div>
+            <div class="search-box">
+                <input type="text" id="searchProductos" placeholder="Buscar producto..." onkeyup="app.buscarProductos()">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"></circle><path d="m21 21-4.35-4.35"></path></svg>
+            </div>
+            <div id="listaProductos"></div>
+        </div>
+
+        <!-- NAVEGACIÓN -->
+        <div class="bottom-nav">
+            <button class="nav-item active" onclick="app.showSection('clientes')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                Clientes
+            </button>
+            <button class="nav-item" onclick="app.showSection('ventas')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="9" cy="21" r="1"></circle><circle cx="20" cy="21" r="1"></circle><path d="M1 1h4l2.68 13.39a2 2 0 0 0 2 1.61h9.72a2 2 0 0 0 2-1.61L23 6H6"></path></svg>
+                Ventas
+            </button>
+            <button class="nav-item" onclick="app.showSection('seguimiento')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                Seguimiento
+            </button>
+            <button class="nav-item" onclick="app.showSection('productos')">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 2L3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"></path><line x1="3" y1="6" x2="21" y2="6"></line><path d="M16 10a4 4 0 0 1-8 0"></path></svg>
+                Productos
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL CLIENTE -->
+    <div class="modal-overlay" id="modalCliente">
+        <div class="modal">
+            <div class="modal-header"><div class="modal-title">Nuevo Cliente</div><button class="modal-close" onclick="app.cerrarModal('modalCliente')">&times;</button></div>
+            <div class="input-group"><label>Nombre</label><input type="text" id="clienteNombre" placeholder="Nombre completo"></div>
+            <div class="input-group"><label>WhatsApp</label><input type="tel" id="clienteWhatsApp" placeholder="Ej: 5358386814"></div>
+            <div class="form-row">
+                <div class="input-group"><label>Tipo Cliente</label><select id="clienteTipo"><option value="Interesado">Interesado</option><option value="Cliente">Cliente</option><option value="Prospecto">Prospecto</option><option value="Recurrente">Recurrente</option></select></div>
+                <div class="input-group"><label>Especialidad</label><input type="text" id="clienteEspecialidad" placeholder="Opcional"></div>
+            </div>
+            <div class="input-group"><label>Tienda</label><select id="clienteTienda"><option value="Odonto Store">Odonto Store</option><option value="Celebraciones">Celebraciones</option></select></div>
+            <button class="btn btn-primary mt-10" onclick="app.guardarCliente()">Guardar Cliente</button>
+        </div>
+    </div>
+
+    <!-- MODAL SEGUIMIENTO -->
+    <div class="modal-overlay" id="modalSeguimiento">
+        <div class="modal">
+            <div class="modal-header"><div class="modal-title">Nuevo Seguimiento</div><button class="modal-close" onclick="app.cerrarModal('modalSeguimiento')">&times;</button></div>
+            <div class="input-group"><label>Cliente</label><select id="segCliente"><option value="">Selecciona cliente</option></select></div>
+            <div class="form-row">
+                <div class="input-group"><label>Tipo</label><select id="segTipo">
+    <option value="Respuesta al cliente">Respuesta al cliente</option>
+    <option value="Seguimiento General">Seguimiento General</option>
+    <option value="Llamada">Llamada</option>
+    <option value="Visita">Visita</option>
+    <option value="Otro">Otro</option>
+</select>
+</div>
+                <div class="input-group"><label>Producto (opcional)</label><select id="segProducto"><option value="">Sin producto</option></select></div>
+            </div>
+            <div class="input-group"><label>Nota</label><textarea id="segNota" placeholder="Detalles del seguimiento..."></textarea></div>
+            <button class="btn btn-primary mt-10" onclick="app.guardarSeguimiento()">Guardar Seguimiento</button>
+        </div>
+    </div>
+
+    <!-- MODAL HISTORIAL -->
+    <div class="modal-overlay" id="modalHistorial">
+        <div class="modal" style="max-width:450px;">
+            <div class="modal-header"><div class="modal-title" id="histTitulo">Historial</div><button class="modal-close" onclick="app.cerrarModal('modalHistorial')">&times;</button></div>
+            <div id="historialContent"></div>
+        </div>
+    </div>
+
+    <!-- MODAL WHATSAPP - 4 OPCIONES (respetando los 3 antiguos) -->
+<div class="modal-overlay" id="modalWhatsApp">
+    <div class="modal" style="max-width:300px;">
+        <div class="modal-header">
+            <div class="modal-title">Enviar Mensaje</div>
+            <button class="modal-close" onclick="app.cerrarModal('modalWhatsApp')">&times;</button>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+            <button class="btn btn-outline" id="btnWsSaludo">🌞 Saludo del día</button>
+            <button class="btn btn-outline" id="btnWsValor">💎 Aportar Valor</button>
+            <button class="btn btn-outline" onclick="app.mostrarModalPromocion(app.clienteWhatsAppActual ? app.clienteWhatsAppActual.nombre : '')">🏷️ Promoción Especial</button>
+            <button class="btn btn-primary" id="btnWsDirecto">✍️ Chat en Blanco (Otro)</button>
+        </div>
+    </div>
+</div>
+
+    <!-- MODAL PROMOCION -->
+<div class="modal-overlay" id="modalPromocion">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title">Promoción Especial</div>
+            <button class="modal-close" onclick="app.cerrarModal('modalPromocion')">&times;</button>
+        </div>
+        
+        <div class="input-group">
+            <label>Producto</label>
+            <select id="promoProducto" onchange="app.calcularPromocion()">
+                <option value="">Selecciona producto</option>
+            </select>
+        </div>
+        
+        <div id="promoInfo" class="hidden">
+            <div class="card" style="background: var(--crema);">
+                <div style="font-size: 0.9rem; color: var(--gris-medio);">Precio regular:</div>
+                <div style="font-size: 1.2rem; text-decoration: line-through; color: var(--gris-claro);">$<span id="promoPrecioRegular">0</span></div>
+                <div style="font-size: 0.9rem; color: var(--gris-medio); margin-top: 8px;">Precio especial comunidad:</div>
+                <div style="font-size: 1.4rem; color: var(--marron); font-weight: 700;">$<span id="promoPrecioFinal">0</span></div>
+            </div>
+        </div>
+        
+        <div class="mt-10">
+            <label style="display:block;margin-bottom:8px;color:var(--gris-medio);font-size:0.9rem;">Descuento especial miembro</label>
+            <div class="discount-selector">
+                <button class="discount-btn" onclick="app.setPromoDescuento(3)">3%</button>
+                <button class="discount-btn" onclick="app.setPromoDescuento(5)">5%</button>
+                <button class="discount-btn active" onclick="app.setPromoDescuento(9)">9%</button>
+                <div class="discount-custom">
+                    <input type="number" id="promoDescuentoCustom" placeholder="%" min="0" max="100" onchange="app.setPromoDescuentoCustom()">
+                    <span>%</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="input-group mt-10">
+            <label>Mensaje (puedes editarlo)</label>
+            <textarea id="promoMensaje" rows="6" style="font-size: 0.9rem;"></textarea>
+        </div>
+        
+        <button class="btn btn-whatsapp w-full mt-10" onclick="app.enviarPromocion()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Enviar Promoción por WhatsApp
+        </button>
+    </div>
+</div>
+
+
+
+    <script>
+    // ============================================
+    // DUAVA NEXO - APP PRINCIPAL
+    // ============================================
+
+    const app = {
+        datos: { vendedores: [], clientes: [], productos: [], ventas: [], seguimientos: [] },
+        estado: { vendedorActual: null, carrito: [], descuento: 0, offline: false, pendientes: [] },
+promoProducto: null,
+promoDescuento: 9,
+        API_URL: 'https://script.google.com/macros/s/AKfycbxTRQ9z9FYrg9ya8ax8vIJco77ktkDUkf22lohUD-pt0um-qhwIAsB0tKWa8vb_Hnhv/exec', // Se configura al instalar
+
+        init() {
+    this.cargarDatosLocales();
+    this.detectarConexion();
+    this.renderLoginVendedores();
+    
+    // Cargar datos del servidor y repintar vendedores cuando lleguen
+    this.cargarDatos().then(() => {
+        this.renderLoginVendedores();
+    });
+    
+    const sesion = localStorage.getItem('duava_sesion');
+    if (sesion) { 
+        this.estado.vendedorActual = JSON.parse(sesion); 
+        this.mostrarApp(); 
+    }
+},
+
+
+        renderLoginVendedores() {
+    const select = document.getElementById('loginVendedor');
+    if (!select) return;
+    select.innerHTML = '<option value="">Selecciona un vendedor...</option>';
+    
+    // El vendedor maestro fijo
+    const maestro = { nombre: 'Abelardo', clave: '7512', especial: true };
+    
+    // Lista base solo con el maestro
+    let lista = [maestro];
+    
+    // Si ya cargaron los de Sheets, los sumamos
+    if (this.datos && this.datos.vendedores && Array.isArray(this.datos.vendedores)) {
+        lista = lista.concat(this.datos.vendedores);
+    }
+    
+    lista.forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = JSON.stringify(v);
+        opt.textContent = v.nombre;
+        select.appendChild(opt);
+    });
+},
+
+
+
+        login() {
+            const select = document.getElementById('loginVendedor');
+            const claveInput = document.getElementById('loginClave').value;
+            const error = document.getElementById('loginError');
+            if (!select.value) { error.textContent = 'Selecciona un vendedor'; error.style.display = 'block'; return; }
+            const vendedor = JSON.parse(select.value);
+            if (vendedor.clave !== claveInput) { error.textContent = 'Clave incorrecta'; error.style.display = 'block'; return; }
+            this.estado.vendedorActual = vendedor;
+            localStorage.setItem('duava_sesion', JSON.stringify(vendedor));
+            error.style.display = 'none';
+            this.mostrarApp();
+        },
+
+        logout() { this.estado.vendedorActual = null; localStorage.removeItem('duava_sesion'); location.reload(); },
+
+        mostrarApp() {
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('appContainer').style.display = 'block';
+            document.getElementById('userName').textContent = this.estado.vendedorActual.nombre;
+            this.cargarDatos();
+        },
+
+        async cargarDatos() {
+            this.mostrarSync('syncing');
+            try {
+                if (navigator.onLine && this.API_URL) {
+                    const response = await fetch(this.API_URL + '?action=getData');
+                    const data = await response.json();
+                    this.datos = data;
+                    this.guardarDatosLocales();
+                    this.estado.offline = false;
+                    this.mostrarSync('online');
+                    this.procesarPendientes();
+                } else { throw new Error('Offline'); }
+            } catch (e) {
+                this.estado.offline = true;
+                this.mostrarSync('offline');
+            }
+            this.renderizarTodo();
+        },
+
+        guardarDatosLocales() { localStorage.setItem('duava_datos', JSON.stringify(this.datos)); },
+        cargarDatosLocales() { const g = localStorage.getItem('duava_datos'); if (g) this.datos = JSON.parse(g); },
+
+        detectarConexion() {
+            window.addEventListener('online', () => { this.estado.offline = false; this.mostrarSync('online'); this.procesarPendientes(); });
+            window.addEventListener('offline', () => { this.estado.offline = true; this.mostrarSync('offline'); });
+        },
+
+        mostrarSync(estado) {
+            const el = document.getElementById('syncStatus');
+            el.className = 'sync-status sync-' + estado;
+            const textos = { online: '● Online', offline: '● Offline', syncing: '⟳ Sync...' };
+            el.textContent = textos[estado];
+        },
+
+        agregarPendiente(op) {
+            this.estado.pendientes.push({ ...op, timestamp: new Date().toISOString() });
+            localStorage.setItem('duava_pendientes', JSON.stringify(this.estado.pendientes));
+        },
+
+        async procesarPendientes() {
+            const pendientes = JSON.parse(localStorage.getItem('duava_pendientes') || '[]');
+            if (!pendientes.length || !this.API_URL) return;
+            this.mostrarSync('syncing');
+            for (const op of pendientes) {
+                try { await fetch(this.API_URL, { method: 'POST', body: JSON.stringify(op) }); } catch (e) { console.error('Sync error:', e); }
+            }
+            localStorage.removeItem('duava_pendientes');
+            this.estado.pendientes = [];
+            this.mostrarSync('online');
+        },
+
+        renderizarTodo() {
+            this.renderClientes();
+            this.renderProductos();
+            this.renderSeguimiento();
+            this.renderAlertas();
+            this.renderSelects();
+            this.renderProductosVenta();
+        },
+
+        showSection(id) {
+            document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+            document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+            document.getElementById('section' + id.charAt(0).toUpperCase() + id.slice(1)).classList.add('active');
+            event.currentTarget.classList.add('active');
+            if (id === 'ventas') this.renderProductosVenta();
+        },
+
+        cerrarModal(id) { document.getElementById(id).classList.remove('active'); },
+        mostrarModalCliente() { document.getElementById('modalCliente').classList.add('active'); },
+        mostrarModalSeguimiento() { document.getElementById('modalSeguimiento').classList.add('active'); },
+
+        // CLIENTES
+        renderClientes(filtro = '') {
+            const container = document.getElementById('listaClientes');
+            let clientes = this.datos.clientes || [];
+            if (filtro) clientes = clientes.filter(c => c.nombre.toLowerCase().includes(filtro.toLowerCase()) || (c.whatsapp && c.whatsapp.includes(filtro)));
+            if (!clientes.length) { container.innerHTML = '<div class="empty-state">No hay clientes</div>'; return; }
+            container.innerHTML = clientes.map(c => {
+                const dias = this.calcularDiasSinContacto(c.ultimoContacto);
+                const alerta = dias >= 20;
+                return `<div class="list-item ${alerta ? 'alert' : ''}" onclick="app.verHistorial('${c.nombre}')">
+                    <div class="list-item-header"><div class="list-item-title">${c.nombre}</div><span class="badge badge-${c.tienda === 'Odonto Store' ? 'odonto' : 'celebraciones'}">${c.tienda || 'General'}</span></div>
+                    <div class="list-item-subtitle">${c.whatsapp ? '📱 ' + c.whatsapp + ' | ' : ''}${c.tipoCliente || 'Sin tipo'} ${alerta ? '<span class="badge badge-alert">⚠ ' + dias + ' días</span>' : ''}</div>
+                    <div class="flex gap-10 mt-10">
+                        <button class="btn btn-whatsapp" style="padding:8px 12px;font-size:0.8rem;" onclick="event.stopPropagation(); app.abrirMenuWhatsApp('${c.nombre}')">WhatsApp</button>
+                        <button class="btn btn-outline" style="padding:8px 12px;font-size:0.8rem;" onclick="event.stopPropagation();app.verHistorial('${c.nombre}')">Historial</button>
+                    </div>
+                </div>`;
+            }).join('');
+        },
+
+        abrirWhatsAppCliente(nombreCliente) {
+    const cliente = this.datos.clientes.find(c => c.nombre === nombreCliente);
+    if (!cliente) return;
+    this.clienteWhatsAppActual = cliente;
+    document.getElementById('modalWhatsApp').classList.add('active');
+},
+
+        buscarClientes() { this.renderClientes(document.getElementById('searchClientes').value); },
+
+        calcularDiasSinContacto(fechaStr) {
+            if (!fechaStr) return 999;
+            const fecha = new Date(fechaStr.split('/').reverse().join('-'));
+            const hoy = new Date();
+            return Math.floor((hoy - fecha) / (1000 * 60 * 60 * 24));
+        },
+
+        renderAlertas() {
+            const container = document.getElementById('alertasContainer');
+            const alertas = (this.datos.clientes || []).filter(c => this.calcularDiasSinContacto(c.ultimoContacto) >= 20);
+            if (!alertas.length) { container.innerHTML = ''; return; }
+            container.innerHTML = `<div class="alert-banner" onclick="app.showSection('clientes')"><div class="alert-count">${alertas.length}</div><div>clientes necesitan contacto (+20 días)</div></div>`;
+        },
+
+                whatsappCliente(numero, msg = "") {
+            if (!numero) return;
+            const clean = numero.toString().replace(/\D/g, '');
+            const url = msg ? `https://wa.me/${clean}?text=${encodeURIComponent(msg)}` : `https://wa.me/${clean}`;
+            window.open(url, '_blank');
+        },
+
+        whatsappClienteVenta() {
+            const clienteId = document.getElementById('ventaCliente').value;
+            const cliente = (this.datos.clientes || []).find(c => c.nombre === clienteId);
+            if (cliente && cliente.whatsapp) this.whatsappCliente(cliente.whatsapp);
+        },
+
+       mostrarModalPromocion(clienteNombre) {
+    this.cerrarModal('modalWhatsApp');
+    document.getElementById('modalPromocion').classList.add('active');
+    
+    // Guardar cliente directamente, no dependiendo de this.clienteWhatsAppActual
+    this.clientePromoActual = this.datos.clientes.find(c => c.nombre === clienteNombre);
+    
+    const select = document.getElementById('promoProducto');
+    select.innerHTML = '<option value="">Selecciona producto</option>';
+    
+    (this.datos.productos || []).forEach((p, index) => {
+        const opt = document.createElement('option');
+        opt.value = index;
+        opt.textContent = p.producto + ' - $' + p.precio + ' (' + p.tienda + ')';
+        select.appendChild(opt);
+    });
+    
+    document.getElementById('promoInfo').classList.add('hidden');
+    this.promoDescuento = 9;
+    this.promoProducto = null;
+    this.actualizarBotonesPromo();
+    document.getElementById('promoMensaje').value = '';
+},
+
+
+
+
+calcularPromocion() {
+    const select = document.getElementById('promoProducto');
+    const selectedIndex = select.selectedIndex;
+    
+    // Si no seleccionó nada o seleccionó el primero (placeholder)
+    if (selectedIndex <= 0) {
+        document.getElementById('promoInfo').classList.add('hidden');
+        this.promoProducto = null;
+        return;
+    }
+    
+    // Obtener el producto directamente del array de datos usando el índice
+    const productoIndex = selectedIndex - 1; // -1 porque el primero es "Selecciona producto"
+    const productos = this.datos.productos || [];
+    
+    if (productoIndex >= productos.length) {
+        alert('Error: producto no encontrado');
+        return;
+    }
+    
+    this.promoProducto = productos[productoIndex];
+    
+    if (!this.promoProducto) {
+        alert('Error al cargar el producto');
+        return;
+    }
+    
+    const precio = parseFloat(this.promoProducto.precio) || 0;
+    const descuento = this.promoDescuento || 9; // 9% por defecto
+    const precioFinal = precio * (1 - descuento / 100);
+    
+    document.getElementById('promoPrecioRegular').textContent = precio.toFixed(2);
+    document.getElementById('promoPrecioFinal').textContent = precioFinal.toFixed(2);
+    document.getElementById('promoInfo').classList.remove('hidden');
+    
+    this.generarMensajePromocion();
+},
+
+
+
+setPromoDescuento(pct) {
+    this.promoDescuento = pct;
+    document.getElementById('promoDescuentoCustom').value = '';
+    this.actualizarBotonesPromo();
+    if (this.promoProducto) this.calcularPromocion();
+},
+
+setPromoDescuentoCustom() {
+    const val = parseFloat(document.getElementById('promoDescuentoCustom').value) || 0;
+    this.promoDescuento = val;
+    this.actualizarBotonesPromo();
+    if (this.promoProducto) this.calcularPromocion();
+},
+
+actualizarBotonesPromo() {
+    document.querySelectorAll('#modalPromocion .discount-btn').forEach(btn => {
+        btn.classList.remove('active');
+        const num = parseInt(btn.textContent);
+        if (num === this.promoDescuento) btn.classList.add('active');
+    });
+},
+
+generarMensajePromocion() {
+    if (!this.promoProducto) return;
+    const cliente = this.clientePromoActual || this.clienteWhatsAppActual;
+    const precio = parseFloat(this.promoProducto.precio) || 0;
+    const precioFinal = precio * (1 - (this.promoDescuento || 0) / 100);
+    const tienda = this.promoProducto.tienda === 'CELEBRACIONES' ? 'DUAVA Celebraciones' : 'DUAVA Odonto Store';
+    
+    const msg = `Hola ${cliente ? cliente.nombre : 'Doctor/a'}, como miembro especial de nuestra comunidad ${tienda}, tenemos una promoción exclusiva para usted:\n\n🏷️ ${this.promoProducto.producto}\n💰 Precio regular: $${precio.toFixed(2)}\n✨ Con su descuento especial del ${this.promoDescuento}% por ser miembro: Solo $${precioFinal.toFixed(2)}\n\n¿Le interesa? Escríbanos y le coordinamos la entrega.`;
+    
+    document.getElementById('promoMensaje').value = msg;
+},
+
+enviarPromocion() {
+    const cliente = this.clientePromoActual || this.clienteWhatsAppActual;    
+    if (!cliente) {
+        alert('Error: no hay cliente seleccionado');
+        return;
+    }
+    // ... resto de la función
+    
+    // Leer producto directamente del select, no de this.promoProducto
+    const select = document.getElementById('promoProducto');
+    const selectedIndex = select.selectedIndex;
+    
+    if (selectedIndex <= 0) {
+        alert('Selecciona un producto primero');
+        return;
+    }
+    
+    const productoIndex = selectedIndex - 1;
+    const productos = this.datos.productos || [];
+    
+    if (productoIndex >= productos.length) {
+        alert('Error: producto no encontrado');
+        return;
+    }
+    
+    const producto = productos[productoIndex];
+    if (!producto) {
+        alert('Error al cargar el producto');
+        return;
+    }
+    
+    const mensaje = document.getElementById('promoMensaje').value;
+    this.whatsappCliente(cliente.whatsapp, mensaje);
+    
+    // Guardar seguimiento automático
+    const precioFinal = (parseFloat(producto.precio) * (1 - (this.promoDescuento || 9) / 100)).toFixed(2);
+    this.guardarSeguimientoAuto(
+        cliente.nombre, 
+        'Mensaje promocional', 
+        `${producto.producto} - Descuento ${this.promoDescuento || 9}% - Precio: $${precioFinal}`
+    );
+    
+    this.cerrarModal('modalPromocion');
+    alert('Promoción enviada y registrada');
+},
+
+
+
+
+        async guardarCliente() {
+            const nombre = document.getElementById('clienteNombre').value.trim();
+            const whatsapp = document.getElementById('clienteWhatsApp').value.trim();
+            const tipo = document.getElementById('clienteTipo').value;
+            const especialidad = document.getElementById('clienteEspecialidad').value.trim();
+            const tienda = document.getElementById('clienteTienda').value;
+            if (!nombre) { alert('El nombre es obligatorio'); return; }
+            const cliente = { nombre, whatsapp, tipoCliente: tipo, especialidad, tienda, ultimoContacto: new Date().toLocaleDateString('es-ES'), tipoSeguimiento: 'Registro inicial' };
+            this.datos.clientes.push(cliente);
+            this.guardarDatosLocales();
+            const op = { action: 'addCliente', data: cliente };
+            if (navigator.onLine && this.API_URL) {
+                try { await fetch(this.API_URL, { method: 'POST', body: JSON.stringify(op) }); } catch (e) { this.agregarPendiente(op); }
+            } else { this.agregarPendiente(op); }
+            this.cerrarModal('modalCliente');
+            this.renderizarTodo();
+            this.limpiarFormCliente();
+        },
+
+        limpiarFormCliente() { document.getElementById('clienteNombre').value = ''; document.getElementById('clienteWhatsApp').value = ''; document.getElementById('clienteEspecialidad').value = ''; },
+
+        // VENTAS
+        renderProductosVenta() {
+            const container = document.getElementById('listaProductosVenta');
+            const tienda = document.getElementById('ventaTienda').value;
+            const productos = (this.datos.productos || []).filter(p => p.tienda === tienda && p.stock > 0);
+            if (!productos.length) { container.innerHTML = '<div class="empty-state">No hay productos disponibles</div>'; return; }
+            container.innerHTML = productos.map(p => {
+                const enCarrito = this.estado.carrito.find(item => item.producto === p.producto);
+                const cantidad = enCarrito ? enCarrito.cantidad : 0;
+                return `<div class="product-item"><div class="product-info"><h4>${p.producto}</h4><div class="price">$${p.precio}</div><div class="stock">Stock: ${p.stock}</div></div><div class="product-actions"><button class="qty-btn" onclick="app.modificarCarrito('${p.producto}', -1)">-</button><span class="qty-display">${cantidad}</span><button class="qty-btn" onclick="app.modificarCarrito('${p.producto}', 1)">+</button></div></div>`;
+            }).join('');
+        },
+
+        modificarCarrito(producto, cambio) {
+            const prod = (this.datos.productos || []).find(p => p.producto === producto);
+            if (!prod) return;
+            const item = this.estado.carrito.find(i => i.producto === producto);
+            if (cambio > 0) {
+                if (item) { if (item.cantidad < prod.stock) item.cantidad++; }
+                else { this.estado.carrito.push({ producto: producto, precio: prod.precio, cantidad: 1 }); }
+            } else if (cambio < 0) {
+                if (item) { item.cantidad--; if (item.cantidad <= 0) this.estado.carrito = this.estado.carrito.filter(i => i.producto !== producto); }
+            }
+            this.renderCarrito();
+            this.renderProductosVenta();
+        },
+
+        renderCarrito() {
+            const container = document.getElementById('cartItems');
+            const summary = document.getElementById('cartSummary');
+            if (!this.estado.carrito.length) { summary.style.display = 'none'; return; }
+            summary.style.display = 'block';
+            let subtotal = 0;
+            container.innerHTML = this.estado.carrito.map(item => { const total = item.precio * item.cantidad; subtotal += total; return `<div class="cart-item"><span>${item.producto} x${item.cantidad}</span><span>$${total.toFixed(2)}</span></div>`; }).join('');
+            const descuento = subtotal * (this.estado.descuento / 100);
+            const total = subtotal - descuento;
+            document.getElementById('cartTotal').innerHTML = `${this.estado.descuento > 0 ? `<div style="font-size:0.9rem;color:var(--gris-claro)">Descuento ${this.estado.descuento}%: -$${descuento.toFixed(2)}</div>` : ''}<div>Total: $${total.toFixed(2)}</div>`;
+        },
+
+        setDescuento(porcentaje) {
+            this.estado.descuento = porcentaje;
+            document.getElementById('descuentoCustom').value = '';
+            document.querySelectorAll('.discount-btn').forEach(btn => { btn.classList.remove('active'); if (btn.textContent === porcentaje + '%') btn.classList.add('active'); });
+            this.renderCarrito();
+        },
+
+        setDescuentoCustom() {
+            const val = parseFloat(document.getElementById('descuentoCustom').value) || 0;
+            this.estado.descuento = val;
+            document.querySelectorAll('.discount-btn').forEach(btn => btn.classList.remove('active'));
+            this.renderCarrito();
+        },
+
+        seleccionarClienteVenta() {
+            const nombre = document.getElementById('ventaCliente').value;
+            const info = document.getElementById('infoClienteVenta');
+            if (nombre) { document.getElementById('clienteVentaNombre').textContent = nombre; info.classList.remove('hidden'); }
+            else { info.classList.add('hidden'); }
+        },
+
+        async guardarVenta() {
+            const cliente = document.getElementById('ventaCliente').value;
+            const tienda = document.getElementById('ventaTienda').value;
+            if (!cliente) { alert('Selecciona un cliente'); return; }
+            if (!this.estado.carrito.length) { alert('Agrega productos al carrito'); return; }
+            const ahora = new Date();
+            const fecha = ahora.toLocaleDateString('es-ES');
+            const hora = ahora.toLocaleTimeString('es-ES');
+            let subtotal = 0;
+            this.estado.carrito.forEach(item => subtotal += item.precio * item.cantidad);
+            const descuento = subtotal * (this.estado.descuento / 100);
+            const total = subtotal - descuento;
+
+            for (const item of this.estado.carrito) {
+                const venta = { fecha: fecha, hora: hora, producto: item.producto, cantidad: item.cantidad, total: (item.precio * item.cantidad * (1 - this.estado.descuento/100)).toFixed(2), motivo: this.estado.descuento > 0 ? 'Descuento ' + this.estado.descuento + '%' : 'Venta normal', vendedor: this.estado.vendedorActual.nombre, tienda: tienda };
+                this.datos.ventas.push(venta);
+                const prod = this.datos.productos.find(p => p.producto === item.producto);
+                if (prod) prod.stock -= item.cantidad;
+            }
+
+            const clienteObj = this.datos.clientes.find(c => c.nombre === cliente);
+            if (clienteObj) { clienteObj.ultimoContacto = fecha; clienteObj.tipoSeguimiento = 'Venta'; }
+
+            const seguimiento = { fecha: fecha + ' ' + hora, cliente: cliente, vendedor: this.estado.vendedorActual.nombre, tipo: 'Venta', producto: this.estado.carrito.map(i => i.producto).join(', '), nota: 'Total: $' + total.toFixed(2) + (this.estado.descuento > 0 ? ' (Desc. ' + this.estado.descuento + '%)' : '') };
+            this.datos.seguimientos.push(seguimiento);
+            this.guardarDatosLocales();
+
+            const op = { action: 'addVenta', data: { ventas: this.estado.carrito.map(item => ({ fecha: fecha, hora: hora, producto: item.producto, cantidad: item.cantidad, total: (item.precio * item.cantidad * (1 - this.estado.descuento/100)).toFixed(2), motivo: this.estado.descuento > 0 ? 'Descuento ' + this.estado.descuento + '%' : 'Venta normal', vendedor: this.estado.vendedorActual.nombre, tienda: tienda })), seguimiento: seguimiento, cliente: cliente, fechaContacto: fecha } };
+
+            if (navigator.onLine && this.API_URL) {
+                try { await fetch(this.API_URL, { method: 'POST', body: JSON.stringify(op) }); } catch (e) { this.agregarPendiente(op); }
+            } else { this.agregarPendiente(op); }
+
+            alert('Venta guardada exitosamente');
+            this.estado.carrito = [];
+            this.estado.descuento = 0;
+            this.setDescuento(0);
+            this.renderCarrito();
+            this.renderProductosVenta();
+            this.renderClientes();
+            this.renderAlertas();
+        },
+
+        // SEGUIMIENTO
+        renderSeguimiento(filtro = '') {
+            const container = document.getElementById('listaSeguimiento');
+            let segs = this.datos.seguimientos || [];
+            if (filtro) segs = segs.filter(s => s.cliente && s.cliente.toLowerCase().includes(filtro.toLowerCase()));
+            segs = segs.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+            if (!segs.length) { container.innerHTML = '<div class="empty-state">No hay seguimientos</div>'; return; }
+            container.innerHTML = segs.map(s => `<div class="list-item"><div class="list-item-header"><div class="list-item-title">${s.cliente || 'Sin cliente'}</div><span class="badge badge-${s.tipo === 'Venta' ? 'odonto' : 'celebraciones'}">${s.tipo}</span></div><div class="list-item-subtitle">${s.fecha} | ${s.vendedor}${s.producto ? ' | ' + s.producto : ''}</div>${s.nota ? `<div style="margin-top:8px;color:var(--gris-medio);font-size:0.9rem;">${s.nota}</div>` : ''}</div>`).join('');
+        },
+
+        buscarSeguimiento() { this.renderSeguimiento(document.getElementById('searchSeguimiento').value); },
+
+        async guardarSeguimiento() {
+            const cliente = document.getElementById('segCliente').value;
+            const tipo = document.getElementById('segTipo').value;
+            const producto = document.getElementById('segProducto').value;
+            const nota = document.getElementById('segNota').value.trim();
+            if (!cliente) { alert('Selecciona un cliente'); return; }
+            const ahora = new Date();
+            const fecha = ahora.toLocaleDateString('es-ES') + ' ' + ahora.toLocaleTimeString('es-ES');
+            const seguimiento = { fecha: fecha, cliente: cliente, vendedor: this.estado.vendedorActual.nombre, tipo: tipo, producto: producto, nota: nota };
+            this.datos.seguimientos.push(seguimiento);
+
+            const clienteObj = this.datos.clientes.find(c => c.nombre === cliente);
+            if (clienteObj) { clienteObj.ultimoContacto = ahora.toLocaleDateString('es-ES'); clienteObj.tipoSeguimiento = tipo; }
+
+            this.guardarDatosLocales();
+            const op = { action: 'addSeguimiento', data: { seguimiento: seguimiento, cliente: cliente, fechaContacto: ahora.toLocaleDateString('es-ES') } };
+            if (navigator.onLine && this.API_URL) {
+                try { await fetch(this.API_URL, { method: 'POST', body: JSON.stringify(op) }); } catch (e) { this.agregarPendiente(op); }
+            } else { this.agregarPendiente(op); }
+
+            this.cerrarModal('modalSeguimiento');
+            this.renderSeguimiento();
+            this.renderClientes();
+            this.renderAlertas();
+            document.getElementById('segNota').value = '';
+        },
+
+        // PRODUCTOS
+        renderProductos(filtro = '') {
+            const container = document.getElementById('listaProductos');
+            let productos = this.datos.productos || [];
+            if (filtro) productos = productos.filter(p => p.producto.toLowerCase().includes(filtro.toLowerCase()));
+            if (!productos.length) { container.innerHTML = '<div class="empty-state">No hay productos</div>'; return; }
+            container.innerHTML = productos.map(p => `<div class="list-item"><div class="list-item-header"><div class="list-item-title">${p.producto}</div><span class="badge badge-${p.tienda === 'ODONTO STORE' ? 'odonto' : 'celebraciones'}">${p.tienda}</span></div><div class="list-item-subtitle">Precio: $${p.precio} | Stock: ${p.stock}</div></div>`).join('');
+        },
+
+        buscarProductos() { this.renderProductos(document.getElementById('searchProductos').value); },
+
+        // SELECTS
+        renderSelects() {
+            const ventaCliente = document.getElementById('ventaCliente');
+            ventaCliente.innerHTML = '<option value="">Selecciona un cliente</option>';
+            (this.datos.clientes || []).forEach(c => { const opt = document.createElement('option'); opt.value = c.nombre; opt.textContent = c.nombre; ventaCliente.appendChild(opt); });
+
+            const segCliente = document.getElementById('segCliente');
+            segCliente.innerHTML = '<option value="">Selecciona cliente</option>';
+            (this.datos.clientes || []).forEach(c => { const opt = document.createElement('option'); opt.value = c.nombre; opt.textContent = c.nombre; segCliente.appendChild(opt); });
+
+            const segProducto = document.getElementById('segProducto');
+            segProducto.innerHTML = '<option value="">Sin producto</option>';
+            (this.datos.productos || []).forEach(p => { const opt = document.createElement('option'); opt.value = p.producto; opt.textContent = p.producto; segProducto.appendChild(opt); });
+        },
+
+        // HISTORIAL
+        verHistorial(nombreCliente) {
+            const cliente = this.datos.clientes.find(c => c.nombre === nombreCliente);
+            if (!cliente) return;
+            document.getElementById('histTitulo').textContent = 'Historial: ' + nombreCliente;
+            const ventas = (this.datos.ventas || []).filter(v => v.cliente === nombreCliente);
+            const segs = (this.datos.seguimientos || []).filter(s => s.cliente === nombreCliente);
+
+            let html = '<div class="timeline">';
+            const todo = [...segs, ...ventas.map(v => ({ fecha: v.fecha + ' ' + v.hora, tipo: 'Venta', vendedor: v.vendedor, producto: v.producto, nota: 'Cantidad: ' + v.cantidad + ' | Total: $' + v.total }))];
+            todo.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+            todo.forEach(t => {
+                const clase = t.tipo === 'Venta' ? 'venta' : t.tipo === 'WhatsApp' ? 'whatsapp' : t.tipo === 'Llamada' ? 'llamada' : '';
+                html += `<div class="timeline-item ${clase}"><div class="timeline-date">${t.fecha}</div><div class="timeline-content"><strong>${t.tipo}</strong> | ${t.vendedor}${t.producto ? '<br>Producto: ' + t.producto : ''}${t.nota ? '<br>' + t.nota : ''}</div></div>`;
+            });
+            html += '</div>';
+
+            if (!todo.length) html = '<div class="empty-state">Sin historial</div>';
+            document.getElementById('historialContent').innerHTML = html;
+            document.getElementById('modalHistorial').classList.add('active');
+        },
+
+        emptyState(msg) { return `<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><div>${msg}</div></div>`; },
+        abrirMenuWhatsApp(nombreCliente) {
+    const cliente = this.datos.clientes.find(c => c.nombre === nombreCliente);
+    if (!cliente) return;
+            
+    this.clienteWhatsAppActual = cliente;
+
+    // Abrir el modal
+    document.getElementById('modalWhatsApp').classList.add('active');
+
+    // Configurar el botón de Saludo
+document.getElementById('btnWsSaludo').onclick = () => {
+    const dias = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+    const hoy = dias[new Date().getDay()];
+    const t = (cliente.especialidad && cliente.especialidad.toLowerCase().includes("odont")) ? "Dr./Dra. " : "";
+    const tienda = cliente.tienda === "Odonto Store" ? "DUAVA OdontoStore" : "DUAVA Celebraciones";
+    
+    const msg = `Hola ${t}${cliente.nombre}, le saluda ${this.estado.vendedorActual.nombre} de ${tienda}. ¿Cómo se siente este ${hoy}? Paso por aquí para desearle un excelente día y ponerme a su disposición. ¡Saludos!`;
+    this.whatsappCliente(cliente.whatsapp, msg);
+    
+    // Guardar automáticamente en el historial
+    this.guardarSeguimientoAuto(cliente.nombre, 'Saludo', 'Saludo del día');
+};
+
+    // Configurar el botón de Valor
+document.getElementById('btnWsValor').onclick = () => {
+    const t = (cliente.especialidad && cliente.especialidad.toLowerCase().includes("odont")) ? "Dr./Dra. " : "";
+    const tienda = cliente.tienda === "Odonto Store" ? "DUAVA OdontoStore" : "DUAVA Celebraciones";
+    
+    const msg = `Hola ${t}${cliente.nombre}, espero que esté bien. Le escribe ${this.estado.vendedorActual.nombre} de ${tienda}. Acabo de ver un material que le puede interesar mucho para su trabajo y quería compartírselo. Se lo envío a continuación:`;
+    this.whatsappCliente(cliente.whatsapp, msg);
+    
+    // Guardar automáticamente en el historial
+    this.guardarSeguimientoAuto(cliente.nombre, 'Aportar Valor', 'Mensaje de valor enviado');
+};
+
+    // Configurar el botón de "Otro" (Blanco)
+    document.getElementById('btnWsDirecto').onclick = () => {
+        this.whatsappCliente(cliente.whatsapp, "");
+    };
+        },
+          
+    guardarSeguimientoAuto(nombreCliente, tipo, nota) {
+        const ahora = new Date();
+        const fecha = ahora.toLocaleDateString('es-ES') + ' ' + ahora.toLocaleTimeString('es-ES');
+        const seguimiento = {
+            fecha: fecha,
+            cliente: nombreCliente,
+            vendedor: this.estado.vendedorActual.nombre,
+            tipo: tipo,
+            producto: '',
+            nota: nota
+        };
+        
+        if (!this.datos.seguimientos) this.datos.seguimientos = [];
+        this.datos.seguimientos.push(seguimiento);
+        
+        const clienteObj = this.datos.clientes.find(c => c.nombre === nombreCliente);
+        if (clienteObj) {
+            clienteObj.ultimoContacto = ahora.toLocaleDateString('es-ES');
+            clienteObj.tipoSeguimiento = tipo;
+        }
+        
+        this.guardarDatosLocales();
+        
+        const op = {
+            action: 'addSeguimiento',
+            data: {
+                seguimiento: seguimiento,
+                cliente: nombreCliente,
+                fechaContacto: ahora.toLocaleDateString('es-ES')
+            }
+        };
+        
+        if (navigator.onLine && this.API_URL) {
+            fetch(this.API_URL, { method: 'POST', body: JSON.stringify(op) }).catch(() => {
+                this.agregarPendiente(op);
+            });
+        } else {
+            this.agregarPendiente(op);
+        }
+        
+        this.renderSeguimiento();
+        this.renderClientes();
+        this.renderAlertas();
+    },
+        
+    };
+
+
+    // Iniciar app
+    document.addEventListener('DOMContentLoaded', () => app.init());
+    </script>
+</body>
+</html>

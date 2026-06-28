@@ -13,65 +13,154 @@
 <title>DUAVA Nexo</title>
     <style>
         /* ============================================
-           DUAVA NEXO - ESTILOS ORIGINALES
+           DUAVA NEXO - ESTILOS PRINCIPALES
+           Diseño: Crema/Gris elegante, NO blanco puro
+           Optimizado para celular
            ============================================ */
-        * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        :root {
-            --crema: #F5F0E8; --crema-oscuro: #E8E0D4; --gris-claro: #9E9A93; --gris-medio: #6B6560;
-            --gris-oscuro: #4A4540; --marron: #8B7355; --marron-oscuro: #6B5B45; --rojo-alerta: #C75B5B;
-            --naranja: #D4A574; --verde: #7A9E7A; --blanco: #FAF8F5; --sombra: rgba(74, 69, 64, 0.15);
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            -webkit-tap-highlight-color: transparent;
         }
-        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif; background: var(--crema); color: var(--gris-oscuro); min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
-        .login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; background: linear-gradient(135deg, var(--crema) 0%, var(--crema-oscuro) 100%); }
+
+        :root {
+            --crema: #F5F0E8;
+            --crema-oscuro: #E8E0D4;
+            --gris-claro: #9E9A93;
+            --gris-medio: #6B6560;
+            --gris-oscuro: #4A4540;
+            --marron: #8B7355;
+            --marron-oscuro: #6B5B45;
+            --rojo-alerta: #C75B5B;
+            --naranja: #D4A574;
+            --verde: #7A9E7A;
+            --blanco: #FAF8F5;
+            --sombra: rgba(74, 69, 64, 0.15);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+            background: var(--crema);
+            color: var(--gris-oscuro);
+            min-height: 100vh;
+            overflow-x: hidden;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* PANTALLA DE LOGIN */
+        .login-screen {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            background: linear-gradient(135deg, var(--crema) 0%, var(--crema-oscuro) 100%);
+        }
+
         .login-logo { font-size: 2.5rem; font-weight: 700; color: var(--marron-oscuro); margin-bottom: 5px; letter-spacing: 2px; }
         .login-subtitle { font-size: 2.5rem; color: var(--gris-claro); margin-bottom: 40px; font-weight: 400; border-bottom: 3px solid var(--marron);}
-        .login-card { background: var(--blanco); border-radius: 20px; padding: 30px 25px; width: 100%; max-width: 360px; box-shadow: 0 10px 40px var(--sombra); }
+
+        .login-card {
+            background: var(--blanco);
+            border-radius: 20px;
+            padding: 30px 25px;
+            width: 100%;
+            max-width: 360px;
+            box-shadow: 0 10px 40px var(--sombra);
+        }
+
         .login-card h2 { text-align: center; color: var(--gris-oscuro); margin-bottom: 25px; font-size: 1.3rem; }
+
         .form-group { margin-bottom: 20px; }
         .form-group label { display: block; margin-bottom: 8px; color: var(--gris-medio); font-size: 0.9rem; font-weight: 500; }
-        .form-group select, .form-group input { width: 100%; padding: 14px 16px; border: 2px solid var(--crema-oscuro); border-radius: 12px; font-size: 1rem; background: var(--blanco); color: var(--gris-oscuro); transition: all 0.3s; outline: none; }
-        .btn-login { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--marron) 0%, var(--marron-oscuro) 100%); color: white; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 600; cursor: pointer; margin-top: 10px; }
+        .form-group select, .form-group input {
+            width: 100%; padding: 14px 16px; border: 2px solid var(--crema-oscuro); border-radius: 12px;
+            font-size: 1rem; background: var(--blanco); color: var(--gris-oscuro); transition: all 0.3s; outline: none;
+        }
+        .form-group select:focus, .form-group input:focus { border-color: var(--marron); box-shadow: 0 0 0 3px rgba(139, 115, 85, 0.1); }
+
+        .btn-login {
+            width: 100%; padding: 16px;
+            background: linear-gradient(135deg, var(--marron) 0%, var(--marron-oscuro) 100%);
+            color: white; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 600;
+            cursor: pointer; transition: transform 0.2s; margin-top: 10px;
+        }
+        .btn-login:active { transform: scale(0.98); }
         .login-error { color: var(--rojo-alerta); text-align: center; margin-top: 15px; font-size: 0.9rem; display: none; }
+
+        /* APP CONTAINER */
         .app-container { display: none; min-height: 100vh; padding-bottom: 80px; }
-        .app-header { background: linear-gradient(135deg, var(--marron-oscuro) 0%, var(--marron) 100%); color: white; padding: 15px 20px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 20px var(--sombra); }
+
+        /* HEADER */
+        .app-header {
+            background: linear-gradient(135deg, var(--marron-oscuro) 0%, var(--marron) 100%);
+            color: white; padding: 15px 20px; position: sticky; top: 0; z-index: 100;
+            box-shadow: 0 2px 20px var(--sombra);
+        }
         .header-top { display: flex; justify-content: space-between; align-items: center; }
         .header-title { font-size: 1.4rem; font-weight: 700; letter-spacing: 1px; }
         .header-user { font-size: 0.85rem; opacity: 0.9; display: flex; align-items: center; gap: 8px; }
         .btn-logout { background: rgba(255,255,255,0.2); border: none; color: white; padding: 6px 12px; border-radius: 8px; font-size: 0.8rem; cursor: pointer; }
-        .bottom-nav { position: fixed; bottom: 0; left: 0; right: 0; background: var(--blanco); display: flex; justify-content: space-around; padding: 8px 0; box-shadow: 0 -2px 20px var(--sombra); z-index: 100; border-top: 1px solid var(--crema-oscuro); }
+
+        /* NAVEGACIÓN INFERIOR */
+        .bottom-nav {
+            position: fixed; bottom: 0; left: 0; right: 0; background: var(--blanco);
+            display: flex; justify-content: space-around; padding: 8px 0;
+            box-shadow: 0 -2px 20px var(--sombra); z-index: 100; border-top: 1px solid var(--crema-oscuro);
+        }
         .nav-item { display: flex; flex-direction: column; align-items: center; padding: 5px 15px; cursor: pointer; color: var(--gris-claro); transition: all 0.3s; border: none; background: none; font-size: 0.75rem; }
         .nav-item.active { color: var(--marron); }
         .nav-item svg { width: 24px; height: 24px; margin-bottom: 3px; }
+
+        /* SECCIONES */
         .section { display: none; padding: 20px; animation: fadeIn 0.3s ease; }
         .section.active { display: block; }
         @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
         .section-title { font-size: 1.5rem; color: var(--gris-oscuro); margin-bottom: 20px; font-weight: 600; }
+
+        /* TARJETAS */
         .card { background: var(--blanco); border-radius: 16px; padding: 20px; margin-bottom: 15px; box-shadow: 0 2px 12px var(--sombra); border: 1px solid var(--crema-oscuro); }
         .card-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
         .card-title { font-size: 1.1rem; font-weight: 600; color: var(--gris-oscuro); }
-        .btn { padding: 12px 20px; border: none; border-radius: 10px; font-size: 0.95rem; font-weight: 600; cursor: pointer; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+
+        /* BOTONES */
+        .btn { padding: 12px 20px; border: none; border-radius: 10px; font-size: 0.95rem; font-weight: 600; cursor: pointer; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 8px; }
+        .btn:active { transform: scale(0.97); }
         .btn-primary { background: linear-gradient(135deg, var(--marron) 0%, var(--marron-oscuro) 100%); color: white; width: 100%; }
         .btn-success { background: linear-gradient(135deg, var(--verde) 0%, #5A8A5A 100%); color: white; }
         .btn-danger { background: var(--rojo-alerta); color: white; }
         .btn-whatsapp { background: linear-gradient(135deg, #25D366 0%, #128C7E 100%); color: white; }
         .btn-outline { background: transparent; border: 2px solid var(--marron); color: var(--marron); }
+
+        /* FORMULARIOS */
         .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
         .input-group { margin-bottom: 15px; }
         .input-group label { display: block; margin-bottom: 6px; color: var(--gris-medio); font-size: 0.85rem; font-weight: 500; }
-        .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 12px 14px; border: 2px solid var(--crema-oscuro); border-radius: 10px; font-size: 1rem; background: var(--blanco); color: var(--gris-oscuro); outline: none; }
+        .input-group input, .input-group select, .input-group textarea { width: 100%; padding: 12px 14px; border: 2px solid var(--crema-oscuro); border-radius: 10px; font-size: 1rem; background: var(--blanco); color: var(--gris-oscuro); outline: none; transition: all 0.3s; }
+        .input-group input:focus, .input-group select:focus, .input-group textarea:focus { border-color: var(--marron); box-shadow: 0 0 0 3px rgba(139, 115, 85, 0.1); }
         .input-group textarea { resize: vertical; min-height: 80px; }
+
+        /* LISTAS Y BUSCADOR */
         .search-box { position: relative; margin-bottom: 20px; }
         .search-box input { width: 100%; padding: 14px 45px 14px 16px; border: 2px solid var(--crema-oscuro); border-radius: 12px; font-size: 1rem; background: var(--blanco); outline: none; }
         .search-box svg { position: absolute; right: 15px; top: 50%; transform: translateY(-50%); color: var(--gris-claro); }
-        .list-item { background: var(--blanco); border-radius: 14px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 8px var(--sombra); border: 1px solid var(--crema-oscuro); cursor: pointer; }
+
+        .list-item { background: var(--blanco); border-radius: 14px; padding: 16px; margin-bottom: 12px; box-shadow: 0 2px 8px var(--sombra); border: 1px solid var(--crema-oscuro); cursor: pointer; transition: all 0.2s; }
+        .list-item:active { transform: scale(0.98); }
         .list-item.alert { border-left: 4px solid var(--rojo-alerta); }
         .list-item-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
         .list-item-title { font-weight: 600; color: var(--gris-oscuro); font-size: 1.05rem; }
         .list-item-subtitle { color: var(--gris-claro); font-size: 0.85rem; }
+
         .badge { display: inline-block; padding: 4px 10px; border-radius: 20px; font-size: 0.75rem; font-weight: 600; }
         .badge-odonto { background: #E3F2FD; color: #1976D2; }
         .badge-celebraciones { background: #F3E5F5; color: #7B1FA2; }
         .badge-alert { background: #FFEBEE; color: var(--rojo-alerta); }
+
+        /* PRODUCTOS EN VENTA */
         .product-item { display: flex; justify-content: space-between; align-items: center; padding: 14px; background: var(--blanco); border-radius: 12px; margin-bottom: 10px; border: 1px solid var(--crema-oscuro); }
         .product-info h4 { font-size: 1rem; color: var(--gris-oscuro); margin-bottom: 4px; }
         .product-info .price { color: var(--marron); font-weight: 700; font-size: 1.1rem; }
@@ -79,14 +168,18 @@
         .product-actions { display: flex; align-items: center; gap: 10px; }
         .qty-btn { width: 32px; height: 32px; border-radius: 8px; border: 2px solid var(--crema-oscuro); background: var(--blanco); color: var(--gris-oscuro); font-size: 1.2rem; cursor: pointer; display: flex; align-items: center; justify-content: center; }
         .qty-display { font-weight: 700; min-width: 30px; text-align: center; }
+
+        /* CARRITO */
         .cart-summary { background: var(--blanco); border-radius: 16px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 12px var(--sombra); border: 2px solid var(--marron); }
         .cart-item { display: flex; justify-content: space-between; padding: 10px 0; border-bottom: 1px solid var(--crema-oscuro); }
         .cart-total { font-size: 1.3rem; font-weight: 700; color: var(--marron-oscuro); text-align: right; margin-top: 10px; padding-top: 10px; border-top: 2px solid var(--crema-oscuro); }
         .discount-selector { display: flex; gap: 10px; margin: 15px 0; flex-wrap: wrap; }
-        .discount-btn { padding: 8px 16px; border: 2px solid var(--crema-oscuro); background: var(--blanco); border-radius: 8px; cursor: pointer; font-size: 0.9rem; }
+        .discount-btn { padding: 8px 16px; border: 2px solid var(--crema-oscuro); background: var(--blanco); border-radius: 8px; cursor: pointer; font-size: 0.9rem; transition: all 0.2s; }
         .discount-btn.active { background: var(--marron); color: white; border-color: var(--marron); }
         .discount-custom { display: flex; align-items: center; gap: 8px; }
         .discount-custom input { width: 70px; padding: 8px; border: 2px solid var(--crema-oscuro); border-radius: 8px; text-align: center; }
+
+        /* MODALES */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(74, 69, 64, 0.6); z-index: 200; align-items: center; justify-content: center; padding: 20px; }
         .modal-overlay.active { display: flex; }
         .modal { background: var(--blanco); border-radius: 20px; padding: 25px; width: 100%; max-width: 400px; max-height: 90vh; overflow-y: auto; animation: modalIn 0.3s ease; }
@@ -94,15 +187,56 @@
         .modal-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; }
         .modal-title { font-size: 1.3rem; font-weight: 600; color: var(--gris-oscuro); }
         .modal-close { background: none; border: none; font-size: 1.5rem; color: var(--gris-claro); cursor: pointer; width: 36px; height: 36px; display: flex; align-items: center; justify-content: center; border-radius: 50%; }
+        .modal-close:active { background: var(--crema); }
+
+        /* HISTORIAL */
+        .timeline { position: relative; padding-left: 30px; }
+        .timeline::before { content: ''; position: absolute; left: 8px; top: 0; bottom: 0; width: 2px; background: var(--crema-oscuro); }
+        .timeline-item { position: relative; margin-bottom: 20px; padding-bottom: 20px; border-bottom: 1px solid var(--crema-oscuro); }
+        .timeline-item::before { content: ''; position: absolute; left: -26px; top: 4px; width: 12px; height: 12px; border-radius: 50%; background: var(--marron); border: 3px solid var(--blanco); box-shadow: 0 0 0 2px var(--marron); }
+        .timeline-item.venta::before { background: var(--verde); box-shadow: 0 0 0 2px var(--verde); }
+        .timeline-item.whatsapp::before { background: #25D366; box-shadow: 0 0 0 2px #25D366; }
+        .timeline-item.llamada::before { background: var(--naranja); box-shadow: 0 0 0 2px var(--naranja); }
+        .timeline-date { font-size: 0.8rem; color: var(--gris-claro); margin-bottom: 5px; }
+        .timeline-content { color: var(--gris-oscuro); }
+
+        /* ALERTAS */
+        .alert-banner { background: linear-gradient(135deg, var(--rojo-alerta) 0%, #B54545 100%); color: white; padding: 12px 20px; border-radius: 12px; margin-bottom: 15px; display: flex; align-items: center; gap: 10px; font-size: 0.9rem; }
+        .alert-count { background: white; color: var(--rojo-alerta); width: 24px; height: 24px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 700; font-size: 0.8rem; }
+
+        /* SINCRONIZACIÓN */
+        .sync-status { position: fixed; top: 70px; right: 15px; padding: 8px 14px; border-radius: 20px; font-size: 0.8rem; font-weight: 600; z-index: 99; transition: all 0.3s; }
+        .sync-online { background: var(--verde); color: white; }
+        .sync-offline { background: var(--naranja); color: white; }
+        .sync-syncing { background: var(--gris-claro); color: white; }
+
+        /* EMPTY STATE */
         .empty-state { text-align: center; padding: 40px 20px; color: var(--gris-claro); }
+        .empty-state svg { width: 80px; height: 80px; margin-bottom: 15px; opacity: 0.5; }
+
+        /* UTILIDADES */
         .hidden { display: none !important; }
         .mt-10 { margin-top: 10px; }
+        .mt-20 { margin-top: 20px; }
         .mb-10 { margin-bottom: 10px; }
         .flex { display: flex; }
         .flex-between { justify-content: space-between; }
         .items-center { align-items: center; }
         .gap-10 { gap: 10px; }
         .w-full { width: 100%; }
+
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: var(--crema); }
+        ::-webkit-scrollbar-thumb { background: var(--gris-claro); border-radius: 3px; }
+
+        .loading { display: inline-block; width: 20px; height: 20px; border: 3px solid var(--crema-oscuro); border-top-color: var(--marron); border-radius: 50%; animation: spin 1s linear infinite; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+
+        @media (max-width: 380px) {
+            .login-logo { font-size: 2rem; }
+            .section-title { font-size: 1.3rem; }
+            .form-row { grid-template-columns: 1fr; }
+        }
     </style>
 </head>
 <body>
@@ -292,7 +426,7 @@
         </div>
     </div>
 
-    <!-- MODAL WHATSAPP -->
+    <!-- MODAL WHATSAPP - 4 OPCIONES (respetando los 3 antiguos) -->
 <div class="modal-overlay" id="modalWhatsApp">
     <div class="modal" style="max-width:300px;">
         <div class="modal-header">
@@ -361,43 +495,59 @@
 
     <script>
     // ============================================
-    // DUAVA NEXO - ORIGINAL FUNCIONAL
+    // DUAVA NEXO - APP PRINCIPAL
     // ============================================
 
     const app = {
         datos: { vendedores: [], clientes: [], productos: [], ventas: [], seguimientos: [] },
         estado: { vendedorActual: null, carrito: [], descuento: 0, offline: false, pendientes: [] },
-        promoProducto: null,
-        promoDescuento: 9,
-        API_URL: 'https://script.google.com/macros/s/AKfycbxTRQ9z9FYrg9ya8ax8vIJco77ktkDUkf22lohUD-pt0um-qhwIAsB0tKWa8vb_Hnhv/exec',
+promoProducto: null,
+promoDescuento: 9,
+        API_URL: 'https://script.google.com/macros/s/AKfycbxTRQ9z9FYrg9ya8ax8vIJco77ktkDUkf22lohUD-pt0um-qhwIAsB0tKWa8vb_Hnhv/exec', // Se configura al instalar
 
         init() {
-            this.cargarDatosLocales();
-            this.detectarConexion();
-            this.renderLoginVendedores();
-            this.cargarDatos().then(() => {
-                this.renderLoginVendedores();
-            });
-            const sesion = localStorage.getItem('duava_sesion');
-            if (sesion) { this.estado.vendedorActual = JSON.parse(sesion); this.mostrarApp(); }
-        },
+    this.cargarDatosLocales();
+    this.detectarConexion();
+    this.renderLoginVendedores();
+    
+    // Cargar datos del servidor y repintar vendedores cuando lleguen
+    this.cargarDatos().then(() => {
+        this.renderLoginVendedores();
+    });
+    
+    const sesion = localStorage.getItem('duava_sesion');
+    if (sesion) { 
+        this.estado.vendedorActual = JSON.parse(sesion); 
+        this.mostrarApp(); 
+    }
+},
+
 
         renderLoginVendedores() {
-            const select = document.getElementById('loginVendedor');
-            if (!select) return;
-            select.innerHTML = '<option value="">Selecciona un vendedor...</option>';
-            const maestro = { nombre: 'Abelardo', clave: '7512', especial: true };
-            let lista = [maestro];
-            if (this.datos && this.datos.vendedores && Array.isArray(this.datos.vendedores)) {
-                lista = lista.concat(this.datos.vendedores);
-            }
-            lista.forEach(v => {
-                const opt = document.createElement('option');
-                opt.value = JSON.stringify(v);
-                opt.textContent = v.nombre;
-                select.appendChild(opt);
-            });
-        },
+    const select = document.getElementById('loginVendedor');
+    if (!select) return;
+    select.innerHTML = '<option value="">Selecciona un vendedor...</option>';
+    
+    // El vendedor maestro fijo
+    const maestro = { nombre: 'Abelardo', clave: '7512', especial: true };
+    
+    // Lista base solo con el maestro
+    let lista = [maestro];
+    
+    // Si ya cargaron los de Sheets, los sumamos
+    if (this.datos && this.datos.vendedores && Array.isArray(this.datos.vendedores)) {
+        lista = lista.concat(this.datos.vendedores);
+    }
+    
+    lista.forEach(v => {
+        const opt = document.createElement('option');
+        opt.value = JSON.stringify(v);
+        opt.textContent = v.nombre;
+        select.appendChild(opt);
+    });
+},
+
+
 
         login() {
             const select = document.getElementById('loginVendedor');
@@ -442,28 +592,34 @@
 
         guardarDatosLocales() { localStorage.setItem('duava_datos', JSON.stringify(this.datos)); },
         cargarDatosLocales() { const g = localStorage.getItem('duava_datos'); if (g) this.datos = JSON.parse(g); },
+
         detectarConexion() {
             window.addEventListener('online', () => { this.estado.offline = false; this.mostrarSync('online'); this.procesarPendientes(); });
             window.addEventListener('offline', () => { this.estado.offline = true; this.mostrarSync('offline'); });
         },
+
         mostrarSync(estado) {
             const el = document.getElementById('syncStatus');
             el.className = 'sync-status sync-' + estado;
             const textos = { online: '● Online', offline: '● Offline', syncing: '⟳ Sync...' };
             el.textContent = textos[estado];
         },
+
         agregarPendiente(op) {
             this.estado.pendientes.push({ ...op, timestamp: new Date().toISOString() });
             localStorage.setItem('duava_pendientes', JSON.stringify(this.estado.pendientes));
         },
+
         async procesarPendientes() {
             const pendientes = JSON.parse(localStorage.getItem('duava_pendientes') || '[]');
             if (!pendientes.length || !this.API_URL) return;
+            this.mostrarSync('syncing');
             for (const op of pendientes) {
-                try { await fetch(this.API_URL, { method: 'POST', body: JSON.stringify(op) }); } catch (e) {}
+                try { await fetch(this.API_URL, { method: 'POST', body: JSON.stringify(op) }); } catch (e) { console.error('Sync error:', e); }
             }
             localStorage.removeItem('duava_pendientes');
             this.estado.pendientes = [];
+            this.mostrarSync('online');
         },
 
         renderizarTodo() {
@@ -474,6 +630,7 @@
             this.renderSelects();
             this.renderProductosVenta();
         },
+
         showSection(id) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -481,6 +638,10 @@
             event.currentTarget.classList.add('active');
             if (id === 'ventas') this.renderProductosVenta();
         },
+
+        cerrarModal(id) { document.getElementById(id).classList.remove('active'); },
+        mostrarModalCliente() { document.getElementById('modalCliente').classList.add('active'); },
+        mostrarModalSeguimiento() { document.getElementById('modalSeguimiento').classList.add('active'); },
 
         // CLIENTES
         renderClientes(filtro = '') {
@@ -503,11 +664,11 @@
         },
 
         abrirWhatsAppCliente(nombreCliente) {
-            const cliente = this.datos.clientes.find(c => c.nombre === nombreCliente);
-            if (!cliente) return;
-            this.clienteWhatsAppActual = cliente;
-            document.getElementById('modalWhatsApp').classList.add('active');
-        },
+    const cliente = this.datos.clientes.find(c => c.nombre === nombreCliente);
+    if (!cliente) return;
+    this.clienteWhatsAppActual = cliente;
+    document.getElementById('modalWhatsApp').classList.add('active');
+},
 
         buscarClientes() { this.renderClientes(document.getElementById('searchClientes').value); },
 
@@ -525,18 +686,194 @@
             container.innerHTML = `<div class="alert-banner" onclick="app.showSection('clientes')"><div class="alert-count">${alertas.length}</div><div>clientes necesitan contacto (+20 días)</div></div>`;
         },
 
-        whatsappCliente(numero, msg = "") {
+                whatsappCliente(numero, msg = "") {
             if (!numero) return;
             const clean = numero.toString().replace(/\D/g, '');
             const url = msg ? `https://wa.me/${clean}?text=${encodeURIComponent(msg)}` : `https://wa.me/${clean}`;
             window.open(url, '_blank');
         },
 
-        // VENTAS (CORREGIDO PARA MOSTRAR SOLO STOCK DISPONIBLE)
+        whatsappClienteVenta() {
+            const clienteId = document.getElementById('ventaCliente').value;
+            const cliente = (this.datos.clientes || []).find(c => c.nombre === clienteId);
+            if (cliente && cliente.whatsapp) this.whatsappCliente(cliente.whatsapp);
+        },
+
+       mostrarModalPromocion(clienteNombre) {
+    this.cerrarModal('modalWhatsApp');
+    document.getElementById('modalPromocion').classList.add('active');
+    
+    // Guardar cliente directamente, no dependiendo de this.clienteWhatsAppActual
+    this.clientePromoActual = this.datos.clientes.find(c => c.nombre === clienteNombre);
+    
+    const select = document.getElementById('promoProducto');
+    select.innerHTML = '<option value="">Selecciona producto</option>';
+    
+    (this.datos.productos || []).forEach((p, index) => {
+        const opt = document.createElement('option');
+        opt.value = index;
+        opt.textContent = p.producto + ' - $' + p.precio + ' (' + p.tienda + ')';
+        select.appendChild(opt);
+    });
+    
+    document.getElementById('promoInfo').classList.add('hidden');
+    this.promoDescuento = 9;
+    this.promoProducto = null;
+    this.actualizarBotonesPromo();
+    document.getElementById('promoMensaje').value = '';
+},
+
+
+
+
+calcularPromocion() {
+    const select = document.getElementById('promoProducto');
+    const selectedIndex = select.selectedIndex;
+    
+    // Si no seleccionó nada o seleccionó el primero (placeholder)
+    if (selectedIndex <= 0) {
+        document.getElementById('promoInfo').classList.add('hidden');
+        this.promoProducto = null;
+        return;
+    }
+    
+    // Obtener el producto directamente del array de datos usando el índice
+    const productoIndex = selectedIndex - 1; // -1 porque el primero es "Selecciona producto"
+    const productos = this.datos.productos || [];
+    
+    if (productoIndex >= productos.length) {
+        alert('Error: producto no encontrado');
+        return;
+    }
+    
+    this.promoProducto = productos[productoIndex];
+    
+    if (!this.promoProducto) {
+        alert('Error al cargar el producto');
+        return;
+    }
+    
+    const precio = parseFloat(this.promoProducto.precio) || 0;
+    const descuento = this.promoDescuento || 9; // 9% por defecto
+    const precioFinal = precio * (1 - descuento / 100);
+    
+    document.getElementById('promoPrecioRegular').textContent = precio.toFixed(2);
+    document.getElementById('promoPrecioFinal').textContent = precioFinal.toFixed(2);
+    document.getElementById('promoInfo').classList.remove('hidden');
+    
+    this.generarMensajePromocion();
+},
+
+
+
+setPromoDescuento(pct) {
+    this.promoDescuento = pct;
+    document.getElementById('promoDescuentoCustom').value = '';
+    this.actualizarBotonesPromo();
+    if (this.promoProducto) this.calcularPromocion();
+},
+
+setPromoDescuentoCustom() {
+    const val = parseFloat(document.getElementById('promoDescuentoCustom').value) || 0;
+    this.promoDescuento = val;
+    this.actualizarBotonesPromo();
+    if (this.promoProducto) this.calcularPromocion();
+},
+
+actualizarBotonesPromo() {
+    document.querySelectorAll('#modalPromocion .discount-btn').forEach(btn => {
+        btn.classList.remove('active');
+        const num = parseInt(btn.textContent);
+        if (num === this.promoDescuento) btn.classList.add('active');
+    });
+},
+
+generarMensajePromocion() {
+    if (!this.promoProducto) return;
+    const cliente = this.clientePromoActual || this.clienteWhatsAppActual;
+    const precio = parseFloat(this.promoProducto.precio) || 0;
+    const precioFinal = precio * (1 - (this.promoDescuento || 0) / 100);
+    const tienda = this.promoProducto.tienda === 'CELEBRACIONES' ? 'DUAVA Celebraciones' : 'DUAVA Odonto Store';
+    
+    const msg = `Hola ${cliente ? cliente.nombre : 'Doctor/a'}, como miembro especial de nuestra comunidad ${tienda}, tenemos una promoción exclusiva para usted:\n\n🏷️ ${this.promoProducto.producto}\n💰 Precio regular: $${precio.toFixed(2)}\n✨ Con su descuento especial del ${this.promoDescuento}% por ser miembro: Solo $${precioFinal.toFixed(2)}\n\n¿Le interesa? Escríbanos y le coordinamos la entrega.`;
+    
+    document.getElementById('promoMensaje').value = msg;
+},
+
+enviarPromocion() {
+    const cliente = this.clientePromoActual || this.clienteWhatsAppActual;    
+    if (!cliente) {
+        alert('Error: no hay cliente seleccionado');
+        return;
+    }
+    // ... resto de la función
+    
+    // Leer producto directamente del select, no de this.promoProducto
+    const select = document.getElementById('promoProducto');
+    const selectedIndex = select.selectedIndex;
+    
+    if (selectedIndex <= 0) {
+        alert('Selecciona un producto primero');
+        return;
+    }
+    
+    const productoIndex = selectedIndex - 1;
+    const productos = this.datos.productos || [];
+    
+    if (productoIndex >= productos.length) {
+        alert('Error: producto no encontrado');
+        return;
+    }
+    
+    const producto = productos[productoIndex];
+    if (!producto) {
+        alert('Error al cargar el producto');
+        return;
+    }
+    
+    const mensaje = document.getElementById('promoMensaje').value;
+    this.whatsappCliente(cliente.whatsapp, mensaje);
+    
+    // Guardar seguimiento automático
+    const precioFinal = (parseFloat(producto.precio) * (1 - (this.promoDescuento || 9) / 100)).toFixed(2);
+    this.guardarSeguimientoAuto(
+        cliente.nombre, 
+        'Mensaje promocional', 
+        `${producto.producto} - Descuento ${this.promoDescuento || 9}% - Precio: $${precioFinal}`
+    );
+    
+    this.cerrarModal('modalPromocion');
+    alert('Promoción enviada y registrada');
+},
+
+
+
+
+        async guardarCliente() {
+            const nombre = document.getElementById('clienteNombre').value.trim();
+            const whatsapp = document.getElementById('clienteWhatsApp').value.trim();
+            const tipo = document.getElementById('clienteTipo').value;
+            const especialidad = document.getElementById('clienteEspecialidad').value.trim();
+            const tienda = document.getElementById('clienteTienda').value;
+            if (!nombre) { alert('El nombre es obligatorio'); return; }
+            const cliente = { nombre, whatsapp, tipoCliente: tipo, especialidad, tienda, ultimoContacto: new Date().toLocaleDateString('es-ES'), tipoSeguimiento: 'Registro inicial' };
+            this.datos.clientes.push(cliente);
+            this.guardarDatosLocales();
+            const op = { action: 'addCliente', data: cliente };
+            if (navigator.onLine && this.API_URL) {
+                try { await fetch(this.API_URL, { method: 'POST', body: JSON.stringify(op) }); } catch (e) { this.agregarPendiente(op); }
+            } else { this.agregarPendiente(op); }
+            this.cerrarModal('modalCliente');
+            this.renderizarTodo();
+            this.limpiarFormCliente();
+        },
+
+        limpiarFormCliente() { document.getElementById('clienteNombre').value = ''; document.getElementById('clienteWhatsApp').value = ''; document.getElementById('clienteEspecialidad').value = ''; },
+
+        // VENTAS
         renderProductosVenta() {
             const container = document.getElementById('listaProductosVenta');
             const tienda = document.getElementById('ventaTienda').value;
-            // Filtra solo productos con stock > 0 (asumimos que el backend ya envía stock disponible)
             const productos = (this.datos.productos || []).filter(p => p.tienda === tienda && p.stock > 0);
             if (!productos.length) { container.innerHTML = '<div class="empty-state">No hay productos disponibles</div>'; return; }
             container.innerHTML = productos.map(p => {
@@ -578,12 +915,14 @@
             document.querySelectorAll('.discount-btn').forEach(btn => { btn.classList.remove('active'); if (btn.textContent === porcentaje + '%') btn.classList.add('active'); });
             this.renderCarrito();
         },
+
         setDescuentoCustom() {
             const val = parseFloat(document.getElementById('descuentoCustom').value) || 0;
             this.estado.descuento = val;
             document.querySelectorAll('.discount-btn').forEach(btn => btn.classList.remove('active'));
             this.renderCarrito();
         },
+
         seleccionarClienteVenta() {
             const nombre = document.getElementById('ventaCliente').value;
             const info = document.getElementById('infoClienteVenta');
@@ -729,30 +1068,36 @@
             
     this.clienteWhatsAppActual = cliente;
 
+    // Abrir el modal
     document.getElementById('modalWhatsApp').classList.add('active');
 
-    document.getElementById('btnWsSaludo').onclick = () => {
-        const dias = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
-        const hoy = dias[new Date().getDay()];
-        const t = (cliente.especialidad && cliente.especialidad.toLowerCase().includes("odont")) ? "Dr./Dra. " : "";
-        const tienda = cliente.tienda === "Odonto Store" ? "DUAVA OdontoStore" : "DUAVA Celebraciones";
-        
-        const msg = `Hola ${t}${cliente.nombre}, le saluda ${this.estado.vendedorActual.nombre} de ${tienda}. ¿Cómo se siente este ${hoy}? Paso por aquí para desearle un excelente día y ponerme a su disposición. ¡Saludos!`;
-        this.whatsappCliente(cliente.whatsapp, msg);
-        
-        this.guardarSeguimientoAuto(cliente.nombre, 'Saludo', 'Saludo del día');
-    };
+    // Configurar el botón de Saludo
+document.getElementById('btnWsSaludo').onclick = () => {
+    const dias = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+    const hoy = dias[new Date().getDay()];
+    const t = (cliente.especialidad && cliente.especialidad.toLowerCase().includes("odont")) ? "Dr./Dra. " : "";
+    const tienda = cliente.tienda === "Odonto Store" ? "DUAVA OdontoStore" : "DUAVA Celebraciones";
+    
+    const msg = `Hola ${t}${cliente.nombre}, le saluda ${this.estado.vendedorActual.nombre} de ${tienda}. ¿Cómo se siente este ${hoy}? Paso por aquí para desearle un excelente día y ponerme a su disposición. ¡Saludos!`;
+    this.whatsappCliente(cliente.whatsapp, msg);
+    
+    // Guardar automáticamente en el historial
+    this.guardarSeguimientoAuto(cliente.nombre, 'Saludo', 'Saludo del día');
+};
 
-    document.getElementById('btnWsValor').onclick = () => {
-        const t = (cliente.especialidad && cliente.especialidad.toLowerCase().includes("odont")) ? "Dr./Dra. " : "";
-        const tienda = cliente.tienda === "Odonto Store" ? "DUAVA OdontoStore" : "DUAVA Celebraciones";
-        
-        const msg = `Hola ${t}${cliente.nombre}, espero que esté bien. Le escribe ${this.estado.vendedorActual.nombre} de ${tienda}. Acabo de ver un material que le puede interesar mucho para su trabajo y quería compartírselo. Se lo envío a continuación:`;
-        this.whatsappCliente(cliente.whatsapp, msg);
-        
-        this.guardarSeguimientoAuto(cliente.nombre, 'Aportar Valor', 'Mensaje de valor enviado');
-    };
+    // Configurar el botón de Valor
+document.getElementById('btnWsValor').onclick = () => {
+    const t = (cliente.especialidad && cliente.especialidad.toLowerCase().includes("odont")) ? "Dr./Dra. " : "";
+    const tienda = cliente.tienda === "Odonto Store" ? "DUAVA OdontoStore" : "DUAVA Celebraciones";
+    
+    const msg = `Hola ${t}${cliente.nombre}, espero que esté bien. Le escribe ${this.estado.vendedorActual.nombre} de ${tienda}. Acabo de ver un material que le puede interesar mucho para su trabajo y quería compartírselo. Se lo envío a continuación:`;
+    this.whatsappCliente(cliente.whatsapp, msg);
+    
+    // Guardar automáticamente en el historial
+    this.guardarSeguimientoAuto(cliente.nombre, 'Aportar Valor', 'Mensaje de valor enviado');
+};
 
+    // Configurar el botón de "Otro" (Blanco)
     document.getElementById('btnWsDirecto').onclick = () => {
         this.whatsappCliente(cliente.whatsapp, "");
     };
@@ -802,125 +1147,11 @@
         this.renderClientes();
         this.renderAlertas();
     },
-
-        // Funciones de Promoción (sin cambios)
-        mostrarModalPromocion(clienteNombre) {
-            this.cerrarModal('modalWhatsApp');
-            document.getElementById('modalPromocion').classList.add('active');
-            this.clientePromoActual = this.datos.clientes.find(c => c.nombre === clienteNombre);
-            const select = document.getElementById('promoProducto');
-            select.innerHTML = '<option value="">Selecciona producto</option>';
-            (this.datos.productos || []).forEach((p, index) => {
-                const opt = document.createElement('option');
-                opt.value = index;
-                opt.textContent = p.producto + ' - $' + p.precio + ' (' + p.tienda + ')';
-                select.appendChild(opt);
-            });
-            document.getElementById('promoInfo').classList.add('hidden');
-            this.promoDescuento = 9;
-            this.promoProducto = null;
-            this.actualizarBotonesPromo();
-            document.getElementById('promoMensaje').value = '';
-        },
-
-        calcularPromocion() {
-            const select = document.getElementById('promoProducto');
-            const selectedIndex = select.selectedIndex;
-            if (selectedIndex <= 0) {
-                document.getElementById('promoInfo').classList.add('hidden');
-                this.promoProducto = null;
-                return;
-            }
-            const productoIndex = selectedIndex - 1;
-            const productos = this.datos.productos || [];
-            if (productoIndex >= productos.length) { alert('Error: producto no encontrado'); return; }
-            this.promoProducto = productos[productoIndex];
-            if (!this.promoProducto) { alert('Error al cargar el producto'); return; }
-            const precio = parseFloat(this.promoProducto.precio) || 0;
-            const descuento = this.promoDescuento || 9;
-            const precioFinal = precio * (1 - descuento / 100);
-            document.getElementById('promoPrecioRegular').textContent = precio.toFixed(2);
-            document.getElementById('promoPrecioFinal').textContent = precioFinal.toFixed(2);
-            document.getElementById('promoInfo').classList.remove('hidden');
-            this.generarMensajePromocion();
-        },
-
-        setPromoDescuento(pct) {
-            this.promoDescuento = pct;
-            document.getElementById('promoDescuentoCustom').value = '';
-            this.actualizarBotonesPromo();
-            if (this.promoProducto) this.calcularPromocion();
-        },
-
-        setPromoDescuentoCustom() {
-            const val = parseFloat(document.getElementById('promoDescuentoCustom').value) || 0;
-            this.promoDescuento = val;
-            this.actualizarBotonesPromo();
-            if (this.promoProducto) this.calcularPromocion();
-        },
-
-        actualizarBotonesPromo() {
-            document.querySelectorAll('#modalPromocion .discount-btn').forEach(btn => {
-                btn.classList.remove('active');
-                const num = parseInt(btn.textContent);
-                if (num === this.promoDescuento) btn.classList.add('active');
-            });
-        },
-
-        generarMensajePromocion() {
-            if (!this.promoProducto) return;
-            const cliente = this.clientePromoActual || this.clienteWhatsAppActual;
-            const precio = parseFloat(this.promoProducto.precio) || 0;
-            const precioFinal = precio * (1 - (this.promoDescuento || 0) / 100);
-            const tienda = this.promoProducto.tienda === 'CELEBRACIONES' ? 'DUAVA Celebraciones' : 'DUAVA Odonto Store';
-            const msg = `Hola ${cliente ? cliente.nombre : 'Doctor/a'}, como miembro especial de nuestra comunidad ${tienda}, tenemos una promoción exclusiva para usted:\n\n🏷️ ${this.promoProducto.producto}\n💰 Precio regular: $${precio.toFixed(2)}\n✨ Con su descuento especial del ${this.promoDescuento}% por ser miembro: Solo $${precioFinal.toFixed(2)}\n\n¿Le interesa? Escríbanos y le coordinamos la entrega.`;
-            document.getElementById('promoMensaje').value = msg;
-        },
-
-        enviarPromocion() {
-            const cliente = this.clientePromoActual || this.clienteWhatsAppActual;    
-            if (!cliente) { alert('Error: no hay cliente seleccionado'); return; }
-            const select = document.getElementById('promoProducto');
-            const selectedIndex = select.selectedIndex;
-            if (selectedIndex <= 0) { alert('Selecciona un producto primero'); return; }
-            const productoIndex = selectedIndex - 1;
-            const productos = this.datos.productos || [];
-            if (productoIndex >= productos.length) { alert('Error: producto no encontrado'); return; }
-            const producto = productos[productoIndex];
-            if (!producto) { alert('Error al cargar el producto'); return; }
-            const mensaje = document.getElementById('promoMensaje').value;
-            this.whatsappCliente(cliente.whatsapp, mensaje);
-            const precioFinal = (parseFloat(producto.precio) * (1 - (this.promoDescuento || 9) / 100)).toFixed(2);
-            this.guardarSeguimientoAuto(cliente.nombre, 'Mensaje promocional', `${producto.producto} - Descuento ${this.promoDescuento || 9}% - Precio: $${precioFinal}`);
-            this.cerrarModal('modalPromocion');
-            alert('Promoción enviada y registrada');
-        },
-
-        cerrarModal(id) { document.getElementById(id).classList.remove('active'); },
-        mostrarModalCliente() { document.getElementById('modalCliente').classList.add('active'); },
-        mostrarModalSeguimiento() { document.getElementById('modalSeguimiento').classList.add('active'); },
-
-        async guardarCliente() {
-            const nombre = document.getElementById('clienteNombre').value.trim();
-            const whatsapp = document.getElementById('clienteWhatsApp').value.trim();
-            const tipo = document.getElementById('clienteTipo').value;
-            const especialidad = document.getElementById('clienteEspecialidad').value.trim();
-            const tienda = document.getElementById('clienteTienda').value;
-            if (!nombre) { alert('El nombre es obligatorio'); return; }
-            const cliente = { nombre, whatsapp, tipoCliente: tipo, especialidad, tienda, ultimoContacto: new Date().toLocaleDateString('es-ES'), tipoSeguimiento: 'Registro inicial' };
-            this.datos.clientes.push(cliente);
-            this.guardarDatosLocales();
-            const op = { action: 'addCliente', data: cliente };
-            if (navigator.onLine && this.API_URL) {
-                try { await fetch(this.API_URL, { method: 'POST', body: JSON.stringify(op) }); } catch (e) { this.agregarPendiente(op); }
-            } else { this.agregarPendiente(op); }
-            this.cerrarModal('modalCliente');
-            this.renderizarTodo();
-            this.limpiarFormCliente();
-        },
-        limpiarFormCliente() { document.getElementById('clienteNombre').value = ''; document.getElementById('clienteWhatsApp').value = ''; document.getElementById('clienteEspecialidad').value = ''; },
+        
     };
 
+
+    // Iniciar app
     document.addEventListener('DOMContentLoaded', () => app.init());
     </script>
 </body>

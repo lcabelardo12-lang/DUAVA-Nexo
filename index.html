@@ -250,10 +250,116 @@
         </div>
     </div>
 
-    <!-- MODALES (Cliente, Seguimiento, Historial, WhatsApp, Promoción) sin cambios -->
-    <!-- ... (copiar los mismos modales que tenías en el código anterior, no los pongo aquí por brevedad, pero NO LOS BORRES, van exactamente igual que antes) ... -->
+    <!-- MODAL CLIENTE -->
+    <div class="modal-overlay" id="modalCliente">
+        <div class="modal">
+            <div class="modal-header"><div class="modal-title">Nuevo Cliente</div><button class="modal-close" onclick="app.cerrarModal('modalCliente')">&times;</button></div>
+            <div class="input-group"><label>Nombre</label><input type="text" id="clienteNombre" placeholder="Nombre completo"></div>
+            <div class="input-group"><label>WhatsApp</label><input type="tel" id="clienteWhatsApp" placeholder="Ej: 5358386814"></div>
+            <div class="form-row">
+                <div class="input-group"><label>Tipo Cliente</label><select id="clienteTipo"><option value="Interesado">Interesado</option><option value="Cliente">Cliente</option><option value="Prospecto">Prospecto</option><option value="Recurrente">Recurrente</option></select></div>
+                <div class="input-group"><label>Especialidad</label><input type="text" id="clienteEspecialidad" placeholder="Opcional"></div>
+            </div>
+            <div class="input-group"><label>Tienda</label><select id="clienteTienda"><option value="Odonto Store">Odonto Store</option><option value="Celebraciones">Celebraciones</option></select></div>
+            <button class="btn btn-primary mt-10" onclick="app.guardarCliente()">Guardar Cliente</button>
+        </div>
+    </div>
 
-    <!-- NUEVO MODAL: CONFIRMACIÓN DE VENTA (LÓGICA DE FINANZAS, SIN SUCURSAL INICIAL) -->
+    <!-- MODAL SEGUIMIENTO -->
+    <div class="modal-overlay" id="modalSeguimiento">
+        <div class="modal">
+            <div class="modal-header"><div class="modal-title">Nuevo Seguimiento</div><button class="modal-close" onclick="app.cerrarModal('modalSeguimiento')">&times;</button></div>
+            <div class="input-group"><label>Cliente</label><select id="segCliente"><option value="">Selecciona cliente</option></select></div>
+            <div class="form-row">
+                <div class="input-group"><label>Tipo</label><select id="segTipo">
+    <option value="Respuesta al cliente">Respuesta al cliente</option>
+    <option value="Seguimiento General">Seguimiento General</option>
+    <option value="Llamada">Llamada</option>
+    <option value="Visita">Visita</option>
+    <option value="Otro">Otro</option>
+</select>
+</div>
+                <div class="input-group"><label>Producto (opcional)</label><select id="segProducto"><option value="">Sin producto</option></select></div>
+            </div>
+            <div class="input-group"><label>Nota</label><textarea id="segNota" placeholder="Detalles del seguimiento..."></textarea></div>
+            <button class="btn btn-primary mt-10" onclick="app.guardarSeguimiento()">Guardar Seguimiento</button>
+        </div>
+    </div>
+
+    <!-- MODAL HISTORIAL -->
+    <div class="modal-overlay" id="modalHistorial">
+        <div class="modal" style="max-width:450px;">
+            <div class="modal-header"><div class="modal-title" id="histTitulo">Historial</div><button class="modal-close" onclick="app.cerrarModal('modalHistorial')">&times;</button></div>
+            <div id="historialContent"></div>
+        </div>
+    </div>
+
+    <!-- MODAL WHATSAPP -->
+<div class="modal-overlay" id="modalWhatsApp">
+    <div class="modal" style="max-width:300px;">
+        <div class="modal-header">
+            <div class="modal-title">Enviar Mensaje</div>
+            <button class="modal-close" onclick="app.cerrarModal('modalWhatsApp')">&times;</button>
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 12px;">
+            <button class="btn btn-outline" id="btnWsSaludo">🌞 Saludo del día</button>
+            <button class="btn btn-outline" id="btnWsValor">💎 Aportar Valor</button>
+            <button class="btn btn-outline" onclick="app.mostrarModalPromocion(app.clienteWhatsAppActual ? app.clienteWhatsAppActual.nombre : '')">🏷️ Promoción Especial</button>
+            <button class="btn btn-primary" id="btnWsDirecto">✍️ Chat en Blanco (Otro)</button>
+        </div>
+    </div>
+</div>
+
+    <!-- MODAL PROMOCION -->
+<div class="modal-overlay" id="modalPromocion">
+    <div class="modal">
+        <div class="modal-header">
+            <div class="modal-title">Promoción Especial</div>
+            <button class="modal-close" onclick="app.cerrarModal('modalPromocion')">&times;</button>
+        </div>
+        
+        <div class="input-group">
+            <label>Producto</label>
+            <select id="promoProducto" onchange="app.calcularPromocion()">
+                <option value="">Selecciona producto</option>
+            </select>
+        </div>
+        
+        <div id="promoInfo" class="hidden">
+            <div class="card" style="background: var(--crema);">
+                <div style="font-size: 0.9rem; color: var(--gris-medio);">Precio regular:</div>
+                <div style="font-size: 1.2rem; text-decoration: line-through; color: var(--gris-claro);">$<span id="promoPrecioRegular">0</span></div>
+                <div style="font-size: 0.9rem; color: var(--gris-medio); margin-top: 8px;">Precio especial comunidad:</div>
+                <div style="font-size: 1.4rem; color: var(--marron); font-weight: 700;">$<span id="promoPrecioFinal">0</span></div>
+            </div>
+        </div>
+        
+        <div class="mt-10">
+            <label style="display:block;margin-bottom:8px;color:var(--gris-medio);font-size:0.9rem;">Descuento especial miembro</label>
+            <div class="discount-selector">
+                <button class="discount-btn" onclick="app.setPromoDescuento(3)">3%</button>
+                <button class="discount-btn" onclick="app.setPromoDescuento(5)">5%</button>
+                <button class="discount-btn active" onclick="app.setPromoDescuento(9)">9%</button>
+                <div class="discount-custom">
+                    <input type="number" id="promoDescuentoCustom" placeholder="%" min="0" max="100" onchange="app.setPromoDescuentoCustom()">
+                    <span>%</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="input-group mt-10">
+            <label>Mensaje (puedes editarlo)</label>
+            <textarea id="promoMensaje" rows="6" style="font-size: 0.9rem;"></textarea>
+        </div>
+        
+        <button class="btn btn-whatsapp w-full mt-10" onclick="app.enviarPromocion()">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413z"/></svg>
+            Enviar Promoción por WhatsApp
+        </button>
+    </div>
+</div>
+
+    <!-- NUEVO MODAL: CONFIRMACIÓN DE VENTA (SELECCIÓN DE LOTE) -->
     <div class="modal-overlay" id="modalConfirmacionVenta">
         <div class="modal" style="max-width:450px;">
             <div class="modal-header">
@@ -268,8 +374,9 @@
 
     <script>
     // ============================================
-    // DUAVA NEXO - VERSIÓN FUNCIONAL SIN SUCURSAL OBLIGATORIA
+    // DUAVA NEXO - COMPLETO Y FUNCIONAL
     // ============================================
+
     const app = {
         datos: { vendedores: [], clientes: [], productos: [], ventas: [], seguimientos: [] },
         estado: { vendedorActual: null, carrito: [], descuento: 0, offline: false, pendientes: [], lotesSeleccionados: {} },
@@ -318,6 +425,8 @@
             this.mostrarApp();
         },
 
+        logout() { this.estado.vendedorActual = null; localStorage.removeItem('duava_sesion'); location.reload(); },
+
         mostrarApp() {
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('appContainer').style.display = 'block';
@@ -346,28 +455,34 @@
 
         guardarDatosLocales() { localStorage.setItem('duava_datos', JSON.stringify(this.datos)); },
         cargarDatosLocales() { const g = localStorage.getItem('duava_datos'); if (g) this.datos = JSON.parse(g); },
+
         detectarConexion() {
             window.addEventListener('online', () => { this.estado.offline = false; this.mostrarSync('online'); this.procesarPendientes(); });
             window.addEventListener('offline', () => { this.estado.offline = true; this.mostrarSync('offline'); });
         },
+
         mostrarSync(estado) {
             const el = document.getElementById('syncStatus');
             el.className = 'sync-status sync-' + estado;
             const textos = { online: '● Online', offline: '● Offline', syncing: '⟳ Sync...' };
             el.textContent = textos[estado];
         },
+
         agregarPendiente(op) {
             this.estado.pendientes.push({ ...op, timestamp: new Date().toISOString() });
             localStorage.setItem('duava_pendientes', JSON.stringify(this.estado.pendientes));
         },
+
         async procesarPendientes() {
             const pendientes = JSON.parse(localStorage.getItem('duava_pendientes') || '[]');
             if (!pendientes.length || !this.API_URL) return;
+            this.mostrarSync('syncing');
             for (const op of pendientes) {
-                try { await fetch(this.API_URL, { method: 'POST', body: JSON.stringify(op) }); } catch (e) {}
+                try { await fetch(this.API_URL, { method: 'POST', body: JSON.stringify(op) }); } catch (e) { console.error('Sync error:', e); }
             }
             localStorage.removeItem('duava_pendientes');
             this.estado.pendientes = [];
+            this.mostrarSync('online');
         },
 
         renderizarTodo() {
@@ -378,6 +493,7 @@
             this.renderSelects();
             this.renderProductosVenta();
         },
+
         showSection(id) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -386,12 +502,66 @@
             if (id === 'ventas') this.renderProductosVenta();
         },
 
-        // --- VENTA (Nueva lógica sin sucursal inicial) ---
+        cerrarModal(id) { document.getElementById(id).classList.remove('active'); },
+        mostrarModalCliente() { document.getElementById('modalCliente').classList.add('active'); },
+        mostrarModalSeguimiento() { document.getElementById('modalSeguimiento').classList.add('active'); },
+
+        // CLIENTES
+        renderClientes(filtro = '') {
+            const container = document.getElementById('listaClientes');
+            let clientes = this.datos.clientes || [];
+            if (filtro) clientes = clientes.filter(c => c.nombre.toLowerCase().includes(filtro.toLowerCase()) || (c.whatsapp && c.whatsapp.includes(filtro)));
+            if (!clientes.length) { container.innerHTML = '<div class="empty-state">No hay clientes</div>'; return; }
+            container.innerHTML = clientes.map(c => {
+                const dias = this.calcularDiasSinContacto(c.ultimoContacto);
+                const alerta = dias >= 20;
+                return `<div class="list-item ${alerta ? 'alert' : ''}" onclick="app.verHistorial('${c.nombre}')">
+                    <div class="list-item-header"><div class="list-item-title">${c.nombre}</div><span class="badge badge-${c.tienda === 'Odonto Store' ? 'odonto' : 'celebraciones'}">${c.tienda || 'General'}</span></div>
+                    <div class="list-item-subtitle">${c.whatsapp ? '📱 ' + c.whatsapp + ' | ' : ''}${c.tipoCliente || 'Sin tipo'} ${alerta ? '<span class="badge badge-alert">⚠ ' + dias + ' días</span>' : ''}</div>
+                    <div class="flex gap-10 mt-10">
+                        <button class="btn btn-whatsapp" style="padding:8px 12px;font-size:0.8rem;" onclick="event.stopPropagation(); app.abrirMenuWhatsApp('${c.nombre}')">WhatsApp</button>
+                        <button class="btn btn-outline" style="padding:8px 12px;font-size:0.8rem;" onclick="event.stopPropagation();app.verHistorial('${c.nombre}')">Historial</button>
+                    </div>
+                </div>`;
+            }).join('');
+        },
+
+        abrirWhatsAppCliente(nombreCliente) {
+            const cliente = this.datos.clientes.find(c => c.nombre === nombreCliente);
+            if (!cliente) return;
+            this.clienteWhatsAppActual = cliente;
+            document.getElementById('modalWhatsApp').classList.add('active');
+        },
+
+        buscarClientes() { this.renderClientes(document.getElementById('searchClientes').value); },
+
+        calcularDiasSinContacto(fechaStr) {
+            if (!fechaStr) return 999;
+            const fecha = new Date(fechaStr.split('/').reverse().join('-'));
+            const hoy = new Date();
+            return Math.floor((hoy - fecha) / (1000 * 60 * 60 * 24));
+        },
+
+        renderAlertas() {
+            const container = document.getElementById('alertasContainer');
+            const alertas = (this.datos.clientes || []).filter(c => this.calcularDiasSinContacto(c.ultimoContacto) >= 20);
+            if (!alertas.length) { container.innerHTML = ''; return; }
+            container.innerHTML = `<div class="alert-banner" onclick="app.showSection('clientes')"><div class="alert-count">${alertas.length}</div><div>clientes necesitan contacto (+20 días)</div></div>`;
+        },
+
+        whatsappCliente(numero, msg = "") {
+            if (!numero) return;
+            const clean = numero.toString().replace(/\D/g, '');
+            const url = msg ? `https://wa.me/${clean}?text=${encodeURIComponent(msg)}` : `https://wa.me/${clean}`;
+            window.open(url, '_blank');
+        },
+
+        // --- NUEVA LÓGICA DE VENTA (SELECCIÓN DE LOTE) ---
         renderProductosVenta() {
             const container = document.getElementById('listaProductosVenta');
             const tienda = document.getElementById('ventaTienda').value;
             const productos = (this.datos.productos || []).filter(p => p.tienda === tienda && p.stock > 0);
-            if (!productos.length) { container.innerHTML = '<div class="empty-state">No hay productos disponibles</div>'; return; }
+            if (!productos.length) { container.innerHTML = '<div class="empty-state">No hay productos disponibles en esta tienda</div>'; return; }
             container.innerHTML = productos.map(p => {
                 const enCarrito = this.estado.carrito.find(item => item.producto === p.producto);
                 const cantidad = enCarrito ? enCarrito.cantidad : 0;
@@ -431,12 +601,14 @@
             document.querySelectorAll('.discount-btn').forEach(btn => { btn.classList.remove('active'); if (btn.textContent === porcentaje + '%') btn.classList.add('active'); });
             this.renderCarrito();
         },
+
         setDescuentoCustom() {
             const val = parseFloat(document.getElementById('descuentoCustom').value) || 0;
             this.estado.descuento = val;
             document.querySelectorAll('.discount-btn').forEach(btn => btn.classList.remove('active'));
             this.renderCarrito();
         },
+
         seleccionarClienteVenta() {
             const nombre = document.getElementById('ventaCliente').value;
             const info = document.getElementById('infoClienteVenta');
@@ -454,7 +626,6 @@
             contenedor.innerHTML = '<div class="loading"></div> Buscando lotes...';
             document.getElementById('modalConfirmacionVenta').classList.add('active');
 
-            // Obtener lotes para cada producto sin filtrar por sucursal
             for (const item of this.estado.carrito) {
                 try {
                     const url = `${this.API_URL}?action=getLotesProducto&producto=${encodeURIComponent(item.producto)}&tienda=${document.getElementById('ventaTienda').value}`;
@@ -562,9 +733,292 @@
             }
         },
 
-        // --- El resto de funciones (Clientes, Seguimiento, Historial, Promociones, etc.) permanecen igual ---
-        // ... (NO las modifiques, pégalas tal cual estaban en tu código anterior, incluyendo los modales de WhatsApp y Promoción) ...
+        // --- SEGUIMIENTO (funciones originales) ---
+        renderSeguimiento(filtro = '') {
+            const container = document.getElementById('listaSeguimiento');
+            let segs = this.datos.seguimientos || [];
+            if (filtro) segs = segs.filter(s => s.cliente && s.cliente.toLowerCase().includes(filtro.toLowerCase()));
+            segs = segs.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+            if (!segs.length) { container.innerHTML = '<div class="empty-state">No hay seguimientos</div>'; return; }
+            container.innerHTML = segs.map(s => `<div class="list-item"><div class="list-item-header"><div class="list-item-title">${s.cliente || 'Sin cliente'}</div><span class="badge badge-${s.tipo === 'Venta' ? 'odonto' : 'celebraciones'}">${s.tipo}</span></div><div class="list-item-subtitle">${s.fecha} | ${s.vendedor}${s.producto ? ' | ' + s.producto : ''}</div>${s.nota ? `<div style="margin-top:8px;color:var(--gris-medio);font-size:0.9rem;">${s.nota}</div>` : ''}</div>`).join('');
+        },
+
+        buscarSeguimiento() { this.renderSeguimiento(document.getElementById('searchSeguimiento').value); },
+
+        async guardarSeguimiento() {
+            const cliente = document.getElementById('segCliente').value;
+            const tipo = document.getElementById('segTipo').value;
+            const producto = document.getElementById('segProducto').value;
+            const nota = document.getElementById('segNota').value.trim();
+            if (!cliente) { alert('Selecciona un cliente'); return; }
+            const ahora = new Date();
+            const fecha = ahora.toLocaleDateString('es-ES') + ' ' + ahora.toLocaleTimeString('es-ES');
+            const seguimiento = { fecha: fecha, cliente: cliente, vendedor: this.estado.vendedorActual.nombre, tipo: tipo, producto: producto, nota: nota };
+            this.datos.seguimientos.push(seguimiento);
+
+            const clienteObj = this.datos.clientes.find(c => c.nombre === cliente);
+            if (clienteObj) { clienteObj.ultimoContacto = ahora.toLocaleDateString('es-ES'); clienteObj.tipoSeguimiento = tipo; }
+
+            this.guardarDatosLocales();
+            const op = { action: 'addSeguimiento', data: { seguimiento: seguimiento, cliente: cliente, fechaContacto: ahora.toLocaleDateString('es-ES') } };
+            if (navigator.onLine && this.API_URL) {
+                try { await fetch(this.API_URL, { method: 'POST', body: JSON.stringify(op) }); } catch (e) { this.agregarPendiente(op); }
+            } else { this.agregarPendiente(op); }
+
+            this.cerrarModal('modalSeguimiento');
+            this.renderSeguimiento();
+            this.renderClientes();
+            this.renderAlertas();
+            document.getElementById('segNota').value = '';
+        },
+
+        // PRODUCTOS
+        renderProductos(filtro = '') {
+            const container = document.getElementById('listaProductos');
+            let productos = this.datos.productos || [];
+            if (filtro) productos = productos.filter(p => p.producto.toLowerCase().includes(filtro.toLowerCase()));
+            if (!productos.length) { container.innerHTML = '<div class="empty-state">No hay productos</div>'; return; }
+            container.innerHTML = productos.map(p => `<div class="list-item"><div class="list-item-header"><div class="list-item-title">${p.producto}</div><span class="badge badge-${p.tienda === 'ODONTO STORE' ? 'odonto' : 'celebraciones'}">${p.tienda}</span></div><div class="list-item-subtitle">Precio: $${p.precio} | Stock: ${p.stock}</div></div>`).join('');
+        },
+
+        buscarProductos() { this.renderProductos(document.getElementById('searchProductos').value); },
+
+        // SELECTS
+        renderSelects() {
+            const ventaCliente = document.getElementById('ventaCliente');
+            ventaCliente.innerHTML = '<option value="">Selecciona un cliente</option>';
+            (this.datos.clientes || []).forEach(c => { const opt = document.createElement('option'); opt.value = c.nombre; opt.textContent = c.nombre; ventaCliente.appendChild(opt); });
+
+            const segCliente = document.getElementById('segCliente');
+            segCliente.innerHTML = '<option value="">Selecciona cliente</option>';
+            (this.datos.clientes || []).forEach(c => { const opt = document.createElement('option'); opt.value = c.nombre; opt.textContent = c.nombre; segCliente.appendChild(opt); });
+
+            const segProducto = document.getElementById('segProducto');
+            segProducto.innerHTML = '<option value="">Sin producto</option>';
+            (this.datos.productos || []).forEach(p => { const opt = document.createElement('option'); opt.value = p.producto; opt.textContent = p.producto; segProducto.appendChild(opt); });
+        },
+
+        // HISTORIAL
+        verHistorial(nombreCliente) {
+            const cliente = this.datos.clientes.find(c => c.nombre === nombreCliente);
+            if (!cliente) return;
+            document.getElementById('histTitulo').textContent = 'Historial: ' + nombreCliente;
+            const ventas = (this.datos.ventas || []).filter(v => v.cliente === nombreCliente);
+            const segs = (this.datos.seguimientos || []).filter(s => s.cliente === nombreCliente);
+
+            let html = '<div class="timeline">';
+            const todo = [...segs, ...ventas.map(v => ({ fecha: v.fecha + ' ' + v.hora, tipo: 'Venta', vendedor: v.vendedor, producto: v.producto, nota: 'Cantidad: ' + v.cantidad + ' | Total: $' + v.total }))];
+            todo.sort((a, b) => new Date(b.fecha) - new Date(a.fecha));
+
+            todo.forEach(t => {
+                const clase = t.tipo === 'Venta' ? 'venta' : t.tipo === 'WhatsApp' ? 'whatsapp' : t.tipo === 'Llamada' ? 'llamada' : '';
+                html += `<div class="timeline-item ${clase}"><div class="timeline-date">${t.fecha}</div><div class="timeline-content"><strong>${t.tipo}</strong> | ${t.vendedor}${t.producto ? '<br>Producto: ' + t.producto : ''}${t.nota ? '<br>' + t.nota : ''}</div></div>`;
+            });
+            html += '</div>';
+
+            if (!todo.length) html = '<div class="empty-state">Sin historial</div>';
+            document.getElementById('historialContent').innerHTML = html;
+            document.getElementById('modalHistorial').classList.add('active');
+        },
+
+        emptyState(msg) { return `<div class="empty-state"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M9.172 16.172a4 4 0 015.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg><div>${msg}</div></div>`; },
+        abrirMenuWhatsApp(nombreCliente) {
+    const cliente = this.datos.clientes.find(c => c.nombre === nombreCliente);
+    if (!cliente) return;
+            
+    this.clienteWhatsAppActual = cliente;
+
+    document.getElementById('modalWhatsApp').classList.add('active');
+
+    document.getElementById('btnWsSaludo').onclick = () => {
+        const dias = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
+        const hoy = dias[new Date().getDay()];
+        const t = (cliente.especialidad && cliente.especialidad.toLowerCase().includes("odont")) ? "Dr./Dra. " : "";
+        const tienda = cliente.tienda === "Odonto Store" ? "DUAVA OdontoStore" : "DUAVA Celebraciones";
+        
+        const msg = `Hola ${t}${cliente.nombre}, le saluda ${this.estado.vendedorActual.nombre} de ${tienda}. ¿Cómo se siente este ${hoy}? Paso por aquí para desearle un excelente día y ponerme a su disposición. ¡Saludos!`;
+        this.whatsappCliente(cliente.whatsapp, msg);
+        
+        this.guardarSeguimientoAuto(cliente.nombre, 'Saludo', 'Saludo del día');
     };
+
+    document.getElementById('btnWsValor').onclick = () => {
+        const t = (cliente.especialidad && cliente.especialidad.toLowerCase().includes("odont")) ? "Dr./Dra. " : "";
+        const tienda = cliente.tienda === "Odonto Store" ? "DUAVA OdontoStore" : "DUAVA Celebraciones";
+        
+        const msg = `Hola ${t}${cliente.nombre}, espero que esté bien. Le escribe ${this.estado.vendedorActual.nombre} de ${tienda}. Acabo de ver un material que le puede interesar mucho para su trabajo y quería compartírselo. Se lo envío a continuación:`;
+        this.whatsappCliente(cliente.whatsapp, msg);
+        
+        this.guardarSeguimientoAuto(cliente.nombre, 'Aportar Valor', 'Mensaje de valor enviado');
+    };
+
+    document.getElementById('btnWsDirecto').onclick = () => {
+        this.whatsappCliente(cliente.whatsapp, "");
+    };
+        },
+          
+    guardarSeguimientoAuto(nombreCliente, tipo, nota) {
+        const ahora = new Date();
+        const fecha = ahora.toLocaleDateString('es-ES') + ' ' + ahora.toLocaleTimeString('es-ES');
+        const seguimiento = {
+            fecha: fecha,
+            cliente: nombreCliente,
+            vendedor: this.estado.vendedorActual.nombre,
+            tipo: tipo,
+            producto: '',
+            nota: nota
+        };
+        
+        if (!this.datos.seguimientos) this.datos.seguimientos = [];
+        this.datos.seguimientos.push(seguimiento);
+        
+        const clienteObj = this.datos.clientes.find(c => c.nombre === nombreCliente);
+        if (clienteObj) {
+            clienteObj.ultimoContacto = ahora.toLocaleDateString('es-ES');
+            clienteObj.tipoSeguimiento = tipo;
+        }
+        
+        this.guardarDatosLocales();
+        
+        const op = {
+            action: 'addSeguimiento',
+            data: {
+                seguimiento: seguimiento,
+                cliente: nombreCliente,
+                fechaContacto: ahora.toLocaleDateString('es-ES')
+            }
+        };
+        
+        if (navigator.onLine && this.API_URL) {
+            fetch(this.API_URL, { method: 'POST', body: JSON.stringify(op) }).catch(() => {
+                this.agregarPendiente(op);
+            });
+        } else {
+            this.agregarPendiente(op);
+        }
+        
+        this.renderSeguimiento();
+        this.renderClientes();
+        this.renderAlertas();
+    },
+
+        // Funciones de Promoción (sin cambios)
+        mostrarModalPromocion(clienteNombre) {
+            this.cerrarModal('modalWhatsApp');
+            document.getElementById('modalPromocion').classList.add('active');
+            this.clientePromoActual = this.datos.clientes.find(c => c.nombre === clienteNombre);
+            const select = document.getElementById('promoProducto');
+            select.innerHTML = '<option value="">Selecciona producto</option>';
+            (this.datos.productos || []).forEach((p, index) => {
+                const opt = document.createElement('option');
+                opt.value = index;
+                opt.textContent = p.producto + ' - $' + p.precio + ' (' + p.tienda + ')';
+                select.appendChild(opt);
+            });
+            document.getElementById('promoInfo').classList.add('hidden');
+            this.promoDescuento = 9;
+            this.promoProducto = null;
+            this.actualizarBotonesPromo();
+            document.getElementById('promoMensaje').value = '';
+        },
+
+        calcularPromocion() {
+            const select = document.getElementById('promoProducto');
+            const selectedIndex = select.selectedIndex;
+            if (selectedIndex <= 0) {
+                document.getElementById('promoInfo').classList.add('hidden');
+                this.promoProducto = null;
+                return;
+            }
+            const productoIndex = selectedIndex - 1;
+            const productos = this.datos.productos || [];
+            if (productoIndex >= productos.length) { alert('Error: producto no encontrado'); return; }
+            this.promoProducto = productos[productoIndex];
+            if (!this.promoProducto) { alert('Error al cargar el producto'); return; }
+            const precio = parseFloat(this.promoProducto.precio) || 0;
+            const descuento = this.promoDescuento || 9;
+            const precioFinal = precio * (1 - descuento / 100);
+            document.getElementById('promoPrecioRegular').textContent = precio.toFixed(2);
+            document.getElementById('promoPrecioFinal').textContent = precioFinal.toFixed(2);
+            document.getElementById('promoInfo').classList.remove('hidden');
+            this.generarMensajePromocion();
+        },
+
+        setPromoDescuento(pct) {
+            this.promoDescuento = pct;
+            document.getElementById('promoDescuentoCustom').value = '';
+            this.actualizarBotonesPromo();
+            if (this.promoProducto) this.calcularPromocion();
+        },
+
+        setPromoDescuentoCustom() {
+            const val = parseFloat(document.getElementById('promoDescuentoCustom').value) || 0;
+            this.promoDescuento = val;
+            this.actualizarBotonesPromo();
+            if (this.promoProducto) this.calcularPromocion();
+        },
+
+        actualizarBotonesPromo() {
+            document.querySelectorAll('#modalPromocion .discount-btn').forEach(btn => {
+                btn.classList.remove('active');
+                const num = parseInt(btn.textContent);
+                if (num === this.promoDescuento) btn.classList.add('active');
+            });
+        },
+
+        generarMensajePromocion() {
+            if (!this.promoProducto) return;
+            const cliente = this.clientePromoActual || this.clienteWhatsAppActual;
+            const precio = parseFloat(this.promoProducto.precio) || 0;
+            const precioFinal = precio * (1 - (this.promoDescuento || 0) / 100);
+            const tienda = this.promoProducto.tienda === 'CELEBRACIONES' ? 'DUAVA Celebraciones' : 'DUAVA Odonto Store';
+            const msg = `Hola ${cliente ? cliente.nombre : 'Doctor/a'}, como miembro especial de nuestra comunidad ${tienda}, tenemos una promoción exclusiva para usted:\n\n🏷️ ${this.promoProducto.producto}\n💰 Precio regular: $${precio.toFixed(2)}\n✨ Con su descuento especial del ${this.promoDescuento}% por ser miembro: Solo $${precioFinal.toFixed(2)}\n\n¿Le interesa? Escríbanos y le coordinamos la entrega.`;
+            document.getElementById('promoMensaje').value = msg;
+        },
+
+        enviarPromocion() {
+            const cliente = this.clientePromoActual || this.clienteWhatsAppActual;    
+            if (!cliente) { alert('Error: no hay cliente seleccionado'); return; }
+            const select = document.getElementById('promoProducto');
+            const selectedIndex = select.selectedIndex;
+            if (selectedIndex <= 0) { alert('Selecciona un producto primero'); return; }
+            const productoIndex = selectedIndex - 1;
+            const productos = this.datos.productos || [];
+            if (productoIndex >= productos.length) { alert('Error: producto no encontrado'); return; }
+            const producto = productos[productoIndex];
+            if (!producto) { alert('Error al cargar el producto'); return; }
+            const mensaje = document.getElementById('promoMensaje').value;
+            this.whatsappCliente(cliente.whatsapp, mensaje);
+            const precioFinal = (parseFloat(producto.precio) * (1 - (this.promoDescuento || 9) / 100)).toFixed(2);
+            this.guardarSeguimientoAuto(cliente.nombre, 'Mensaje promocional', `${producto.producto} - Descuento ${this.promoDescuento || 9}% - Precio: $${precioFinal}`);
+            this.cerrarModal('modalPromocion');
+            alert('Promoción enviada y registrada');
+        },
+
+        // Resto de funciones originales (guardarCliente, limpiarFormCliente, etc.)
+        async guardarCliente() {
+            const nombre = document.getElementById('clienteNombre').value.trim();
+            const whatsapp = document.getElementById('clienteWhatsApp').value.trim();
+            const tipo = document.getElementById('clienteTipo').value;
+            const especialidad = document.getElementById('clienteEspecialidad').value.trim();
+            const tienda = document.getElementById('clienteTienda').value;
+            if (!nombre) { alert('El nombre es obligatorio'); return; }
+            const cliente = { nombre, whatsapp, tipoCliente: tipo, especialidad, tienda, ultimoContacto: new Date().toLocaleDateString('es-ES'), tipoSeguimiento: 'Registro inicial' };
+            this.datos.clientes.push(cliente);
+            this.guardarDatosLocales();
+            const op = { action: 'addCliente', data: cliente };
+            if (navigator.onLine && this.API_URL) {
+                try { await fetch(this.API_URL, { method: 'POST', body: JSON.stringify(op) }); } catch (e) { this.agregarPendiente(op); }
+            } else { this.agregarPendiente(op); }
+            this.cerrarModal('modalCliente');
+            this.renderizarTodo();
+            this.limpiarFormCliente();
+        },
+
+        limpiarFormCliente() { document.getElementById('clienteNombre').value = ''; document.getElementById('clienteWhatsApp').value = ''; document.getElementById('clienteEspecialidad').value = ''; },
+    };
+
+    // Iniciar app
     document.addEventListener('DOMContentLoaded', () => app.init());
     </script>
 </body>

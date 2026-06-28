@@ -13,7 +13,7 @@
 <title>DUAVA Nexo</title>
     <style>
         /* ============================================
-           DUAVA NEXO - ESTILOS PRINCIPALES (sin cambios)
+           DUAVA NEXO - ESTILOS ORIGINALES
            ============================================ */
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         :root {
@@ -72,10 +72,6 @@
         .badge-odonto { background: #E3F2FD; color: #1976D2; }
         .badge-celebraciones { background: #F3E5F5; color: #7B1FA2; }
         .badge-alert { background: #FFEBEE; color: var(--rojo-alerta); }
-        .slote{background:#e7f3ff;border:2px solid #0066cc;border-radius:8px;padding:10px;margin:6px 0;cursor:pointer}
-        .slote.sel{background:#0066cc;color:#fff}
-        .badge-t{background:#ffc107;color:#333;padding:2px 6px;border-radius:10px;font-size:10px;font-weight:bold}
-        .badge-r{background:#dc3545;color:#fff;padding:2px 6px;border-radius:10px;font-size:10px;font-weight:bold}
         .product-item { display: flex; justify-content: space-between; align-items: center; padding: 14px; background: var(--blanco); border-radius: 12px; margin-bottom: 10px; border: 1px solid var(--crema-oscuro); }
         .product-info h4 { font-size: 1rem; color: var(--gris-oscuro); margin-bottom: 4px; }
         .product-info .price { color: var(--marron); font-weight: 700; font-size: 1.1rem; }
@@ -163,21 +159,23 @@
             <div class="section-title">Nueva Venta</div>
             <div class="card">
                 <div class="input-group">
-                    <label>Tienda</label>
-                    <select id="ventaTienda" onchange="app.renderProductosVenta()">
-                        <option value="ODONTO STORE">Odonto Store</option>
-                        <option value="CELEBRACIONES">Celebraciones</option>
-                    </select>
-                </div>
-                <div class="input-group">
                     <label>Cliente</label>
                     <select id="ventaCliente" onchange="app.seleccionarClienteVenta()"><option value="">Selecciona un cliente</option></select>
                 </div>
                 <div id="infoClienteVenta" class="hidden">
                     <div class="flex flex-between items-center mt-10">
                         <span id="clienteVentaNombre"></span>
-                        <button class="btn btn-whatsapp" style="padding:8px 12px;font-size:0.8rem;">WhatsApp</button>
+                        <button class="btn btn-whatsapp" style="padding:8px 12px;font-size:0.8rem;" onclick="app.abrirWhatsAppCliente('${c.nombre}')">WhatsApp</button>
                     </div>
+                </div>
+            </div>
+            <div class="card">
+                <div class="input-group">
+                    <label>Tienda</label>
+                    <select id="ventaTienda" onchange="app.renderProductosVenta()">
+                        <option value="ODONTO STORE">Odonto Store</option>
+                        <option value="CELEBRACIONES">Celebraciones</option>
+                    </select>
                 </div>
             </div>
             <div class="card">
@@ -201,7 +199,7 @@
                     </div>
                 </div>
                 <div class="cart-total" id="cartTotal">Total: $0.00</div>
-                <button class="btn btn-success w-full mt-10" onclick="app.mostrarConfirmacionVenta()">Revisar Venta</button>
+                <button class="btn btn-success w-full mt-10" onclick="app.guardarVenta()">Confirmar Venta</button>
             </div>
         </div>
 
@@ -359,27 +357,16 @@
     </div>
 </div>
 
-    <!-- NUEVO MODAL: CONFIRMACIÓN DE VENTA (SELECCIÓN DE LOTE) -->
-    <div class="modal-overlay" id="modalConfirmacionVenta">
-        <div class="modal" style="max-width:450px;">
-            <div class="modal-header">
-                <div class="modal-title">Confirmar Venta</div>
-                <button class="modal-close" onclick="app.cerrarModal('modalConfirmacionVenta')">&times;</button>
-            </div>
-            <div id="confirmacionVentaContenido"></div>
-            <div id="confirmacionVentaError" style="color:red;text-align:center;margin-bottom:10px;"></div>
-            <button class="btn btn-success w-full mt-10" onclick="app.guardarVentaDefinitiva()">Confirmar Venta</button>
-        </div>
-    </div>
+
 
     <script>
     // ============================================
-    // DUAVA NEXO - COMPLETO Y FUNCIONAL
+    // DUAVA NEXO - ORIGINAL FUNCIONAL
     // ============================================
 
     const app = {
         datos: { vendedores: [], clientes: [], productos: [], ventas: [], seguimientos: [] },
-        estado: { vendedorActual: null, carrito: [], descuento: 0, offline: false, pendientes: [], lotesSeleccionados: {} },
+        estado: { vendedorActual: null, carrito: [], descuento: 0, offline: false, pendientes: [] },
         promoProducto: null,
         promoDescuento: 9,
         API_URL: 'https://script.google.com/macros/s/AKfycbxTRQ9z9FYrg9ya8ax8vIJco77ktkDUkf22lohUD-pt0um-qhwIAsB0tKWa8vb_Hnhv/exec',
@@ -455,34 +442,28 @@
 
         guardarDatosLocales() { localStorage.setItem('duava_datos', JSON.stringify(this.datos)); },
         cargarDatosLocales() { const g = localStorage.getItem('duava_datos'); if (g) this.datos = JSON.parse(g); },
-
         detectarConexion() {
             window.addEventListener('online', () => { this.estado.offline = false; this.mostrarSync('online'); this.procesarPendientes(); });
             window.addEventListener('offline', () => { this.estado.offline = true; this.mostrarSync('offline'); });
         },
-
         mostrarSync(estado) {
             const el = document.getElementById('syncStatus');
             el.className = 'sync-status sync-' + estado;
             const textos = { online: '● Online', offline: '● Offline', syncing: '⟳ Sync...' };
             el.textContent = textos[estado];
         },
-
         agregarPendiente(op) {
             this.estado.pendientes.push({ ...op, timestamp: new Date().toISOString() });
             localStorage.setItem('duava_pendientes', JSON.stringify(this.estado.pendientes));
         },
-
         async procesarPendientes() {
             const pendientes = JSON.parse(localStorage.getItem('duava_pendientes') || '[]');
             if (!pendientes.length || !this.API_URL) return;
-            this.mostrarSync('syncing');
             for (const op of pendientes) {
-                try { await fetch(this.API_URL, { method: 'POST', body: JSON.stringify(op) }); } catch (e) { console.error('Sync error:', e); }
+                try { await fetch(this.API_URL, { method: 'POST', body: JSON.stringify(op) }); } catch (e) {}
             }
             localStorage.removeItem('duava_pendientes');
             this.estado.pendientes = [];
-            this.mostrarSync('online');
         },
 
         renderizarTodo() {
@@ -493,7 +474,6 @@
             this.renderSelects();
             this.renderProductosVenta();
         },
-
         showSection(id) {
             document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
             document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
@@ -501,10 +481,6 @@
             event.currentTarget.classList.add('active');
             if (id === 'ventas') this.renderProductosVenta();
         },
-
-        cerrarModal(id) { document.getElementById(id).classList.remove('active'); },
-        mostrarModalCliente() { document.getElementById('modalCliente').classList.add('active'); },
-        mostrarModalSeguimiento() { document.getElementById('modalSeguimiento').classList.add('active'); },
 
         // CLIENTES
         renderClientes(filtro = '') {
@@ -556,12 +532,13 @@
             window.open(url, '_blank');
         },
 
-        // --- NUEVA LÓGICA DE VENTA (SELECCIÓN DE LOTE) ---
+        // VENTAS (CORREGIDO PARA MOSTRAR SOLO STOCK DISPONIBLE)
         renderProductosVenta() {
             const container = document.getElementById('listaProductosVenta');
             const tienda = document.getElementById('ventaTienda').value;
+            // Filtra solo productos con stock > 0 (asumimos que el backend ya envía stock disponible)
             const productos = (this.datos.productos || []).filter(p => p.tienda === tienda && p.stock > 0);
-            if (!productos.length) { container.innerHTML = '<div class="empty-state">No hay productos disponibles en esta tienda</div>'; return; }
+            if (!productos.length) { container.innerHTML = '<div class="empty-state">No hay productos disponibles</div>'; return; }
             container.innerHTML = productos.map(p => {
                 const enCarrito = this.estado.carrito.find(item => item.producto === p.producto);
                 const cantidad = enCarrito ? enCarrito.cantidad : 0;
@@ -601,14 +578,12 @@
             document.querySelectorAll('.discount-btn').forEach(btn => { btn.classList.remove('active'); if (btn.textContent === porcentaje + '%') btn.classList.add('active'); });
             this.renderCarrito();
         },
-
         setDescuentoCustom() {
             const val = parseFloat(document.getElementById('descuentoCustom').value) || 0;
             this.estado.descuento = val;
             document.querySelectorAll('.discount-btn').forEach(btn => btn.classList.remove('active'));
             this.renderCarrito();
         },
-
         seleccionarClienteVenta() {
             const nombre = document.getElementById('ventaCliente').value;
             const info = document.getElementById('infoClienteVenta');
@@ -616,124 +591,50 @@
             else { info.classList.add('hidden'); }
         },
 
-        async mostrarConfirmacionVenta() {
-            const cliente = document.getElementById('ventaCliente').value;
-            if (!cliente) { alert('Selecciona un cliente'); return; }
-            if (!this.estado.carrito.length) { alert('Agrega productos al carrito'); return; }
-
-            this.promoventaTemp = { lotes: [], seleccionados: {} };
-            const contenedor = document.getElementById('confirmacionVentaContenido');
-            contenedor.innerHTML = '<div class="loading"></div> Buscando lotes...';
-            document.getElementById('modalConfirmacionVenta').classList.add('active');
-
-            for (const item of this.estado.carrito) {
-                try {
-                    const url = `${this.API_URL}?action=getLotesProducto&producto=${encodeURIComponent(item.producto)}&tienda=${document.getElementById('ventaTienda').value}`;
-                    const resp = await fetch(url);
-                    const data = await resp.json();
-                    const lotes = data.lotes || [];
-                    this.promoventaTemp.lotes.push({ producto: item.producto, lotes: lotes });
-                } catch(e) { }
-            }
-
-            let html = '';
-            this.promoventaTemp.lotes.forEach((grupo, idx) => {
-                const lotes = grupo.lotes;
-                html += `<div style="margin-bottom:15px"><strong>${grupo.producto}</strong>`;
-                if (lotes.length === 0) {
-                    html += '<div style="color:#C75B5B">Sin stock disponible</div>';
-                } else {
-                    lotes.forEach((l, i) => {
-                        const isFirst = i === 0;
-                        html += `<div class="slote${isFirst ? ' sel' : ''}" onclick="app.seleccionarLote('${grupo.producto}', '${l.loteId}', this)" style="cursor:pointer;padding:8px;margin:4px 0;">
-                            <span>Lote: ${l.loteId} | ${l.sucursal} | Vence: ${l.vencimiento} | Disponible: ${l.cantidadRestante}</span>
-                            ${l.diasVencimiento <= 90 ? '<span class="badge-r">Próximo</span>' : ''}
-                        </div>`;
-                        if (isFirst) this.promoventaTemp.seleccionados[grupo.producto] = l.loteId;
-                    });
-                }
-                html += '</div>';
-            });
-            contenedor.innerHTML = html;
-        },
-
-        seleccionarLote(producto, loteId, elemento) {
-            this.promoventaTemp.seleccionados[producto] = loteId;
-            const parent = elemento.parentNode;
-            parent.querySelectorAll('.slote').forEach(s => s.classList.remove('sel'));
-            elemento.classList.add('sel');
-        },
-
-        async guardarVentaDefinitiva() {
+        async guardarVenta() {
             const cliente = document.getElementById('ventaCliente').value;
             const tienda = document.getElementById('ventaTienda').value;
+            if (!cliente) { alert('Selecciona un cliente'); return; }
+            if (!this.estado.carrito.length) { alert('Agrega productos al carrito'); return; }
             const ahora = new Date();
             const fecha = ahora.toLocaleDateString('es-ES');
             const hora = ahora.toLocaleTimeString('es-ES');
-            const errEl = document.getElementById('confirmacionVentaError');
-            errEl.textContent = '';
+            let subtotal = 0;
+            this.estado.carrito.forEach(item => subtotal += item.precio * item.cantidad);
+            const descuento = subtotal * (this.estado.descuento / 100);
+            const total = subtotal - descuento;
 
-            if (!cliente || !this.estado.carrito.length) { errEl.textContent = 'Faltan datos'; return; }
-
-            const ventas = this.estado.carrito.map(item => {
-                const loteId = this.promoventaTemp.seleccionados[item.producto];
-                if (!loteId) { errEl.textContent = `Falta seleccionar lote para: ${item.producto}`; return null; }
-                const loteInfo = this.promoventaTemp.lotes.find(g => g.producto === item.producto)?.lotes.find(l => l.loteId === loteId);
-                return {
-                    fecha, hora,
-                    producto: item.producto,
-                    cantidad: item.cantidad,
-                    total: (item.precio * item.cantidad * (1 - this.estado.descuento/100)).toFixed(2),
-                    motivo: this.estado.descuento > 0 ? 'Descuento ' + this.estado.descuento + '%' : 'Venta normal',
-                    vendedor: this.estado.vendedorActual.nombre,
-                    tienda: tienda,
-                    loteId: loteId,
-                    precioVenta: item.precio,
-                    tipoVenta: 'Normal',
-                    sucursal: loteInfo ? loteInfo.sucursal : ''
-                };
-            });
-
-            if (ventas.some(v => v === null)) return;
-
-            const payload = {
-                action: 'realizarVenta',
-                ventas: ventas,
-                seguimiento: {
-                    fecha: fecha + ' ' + hora,
-                    cliente: cliente,
-                    vendedor: this.estado.vendedorActual.nombre,
-                    tipo: 'Venta',
-                    producto: ventas.map(v => v.producto).join(', '),
-                    nota: 'Total: $' + ventas.reduce((sum, v) => sum + parseFloat(v.total), 0).toFixed(2)
-                },
-                cliente: cliente,
-                fechaContacto: fecha
-            };
-
-            try {
-                const resp = await fetch(this.API_URL, { method: 'POST', body: JSON.stringify(payload) });
-                const result = await resp.json();
-                if (result.success) {
-                    alert('Venta registrada y stock actualizado correctamente.');
-                    this.cerrarModal('modalConfirmacionVenta');
-                    this.estado.carrito = [];
-                    this.estado.descuento = 0;
-                    this.renderCarrito();
-                    this.renderProductosVenta();
-                    this.cargarDatos();
-                    this.renderClientes();
-                    this.renderAlertas();
-                } else {
-                    errEl.textContent = result.error || 'Error desconocido';
-                }
-            } catch(e) {
-                this.agregarPendiente(payload);
-                alert('Venta guardada offline. Se sincronizará cuando haya conexión.');
+            for (const item of this.estado.carrito) {
+                const venta = { fecha: fecha, hora: hora, producto: item.producto, cantidad: item.cantidad, total: (item.precio * item.cantidad * (1 - this.estado.descuento/100)).toFixed(2), motivo: this.estado.descuento > 0 ? 'Descuento ' + this.estado.descuento + '%' : 'Venta normal', vendedor: this.estado.vendedorActual.nombre, tienda: tienda };
+                this.datos.ventas.push(venta);
+                const prod = this.datos.productos.find(p => p.producto === item.producto);
+                if (prod) prod.stock -= item.cantidad;
             }
+
+            const clienteObj = this.datos.clientes.find(c => c.nombre === cliente);
+            if (clienteObj) { clienteObj.ultimoContacto = fecha; clienteObj.tipoSeguimiento = 'Venta'; }
+
+            const seguimiento = { fecha: fecha + ' ' + hora, cliente: cliente, vendedor: this.estado.vendedorActual.nombre, tipo: 'Venta', producto: this.estado.carrito.map(i => i.producto).join(', '), nota: 'Total: $' + total.toFixed(2) + (this.estado.descuento > 0 ? ' (Desc. ' + this.estado.descuento + '%)' : '') };
+            this.datos.seguimientos.push(seguimiento);
+            this.guardarDatosLocales();
+
+            const op = { action: 'addVenta', data: { ventas: this.estado.carrito.map(item => ({ fecha: fecha, hora: hora, producto: item.producto, cantidad: item.cantidad, total: (item.precio * item.cantidad * (1 - this.estado.descuento/100)).toFixed(2), motivo: this.estado.descuento > 0 ? 'Descuento ' + this.estado.descuento + '%' : 'Venta normal', vendedor: this.estado.vendedorActual.nombre, tienda: tienda })), seguimiento: seguimiento, cliente: cliente, fechaContacto: fecha } };
+
+            if (navigator.onLine && this.API_URL) {
+                try { await fetch(this.API_URL, { method: 'POST', body: JSON.stringify(op) }); } catch (e) { this.agregarPendiente(op); }
+            } else { this.agregarPendiente(op); }
+
+            alert('Venta guardada exitosamente');
+            this.estado.carrito = [];
+            this.estado.descuento = 0;
+            this.setDescuento(0);
+            this.renderCarrito();
+            this.renderProductosVenta();
+            this.renderClientes();
+            this.renderAlertas();
         },
 
-        // --- SEGUIMIENTO (funciones originales) ---
+        // SEGUIMIENTO
         renderSeguimiento(filtro = '') {
             const container = document.getElementById('listaSeguimiento');
             let segs = this.datos.seguimientos || [];
@@ -995,7 +896,10 @@
             alert('Promoción enviada y registrada');
         },
 
-        // Resto de funciones originales (guardarCliente, limpiarFormCliente, etc.)
+        cerrarModal(id) { document.getElementById(id).classList.remove('active'); },
+        mostrarModalCliente() { document.getElementById('modalCliente').classList.add('active'); },
+        mostrarModalSeguimiento() { document.getElementById('modalSeguimiento').classList.add('active'); },
+
         async guardarCliente() {
             const nombre = document.getElementById('clienteNombre').value.trim();
             const whatsapp = document.getElementById('clienteWhatsApp').value.trim();
@@ -1014,11 +918,9 @@
             this.renderizarTodo();
             this.limpiarFormCliente();
         },
-
         limpiarFormCliente() { document.getElementById('clienteNombre').value = ''; document.getElementById('clienteWhatsApp').value = ''; document.getElementById('clienteEspecialidad').value = ''; },
     };
 
-    // Iniciar app
     document.addEventListener('DOMContentLoaded', () => app.init());
     </script>
 </body>

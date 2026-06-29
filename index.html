@@ -19,7 +19,7 @@
         }
         * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; background: var(--crema); color: var(--gris-oscuro); min-height: 100vh; overflow-x: hidden; -webkit-font-smoothing: antialiased; }
-        .login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; background: linear-gradient(135deg, var(--crema) 0%, var(--crema-oscuro) 100%); position: fixed; top: 0; left: 0; width: 100%; z-index: 1000; }
+        .login-screen { display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; padding: 20px; background: linear-gradient(135deg, var(--crema) 0%, var(--crema-oscuro) 100%); }
         .login-logo { font-size: 2.5rem; font-weight: 700; color: var(--marron-oscuro); margin-bottom: 5px; letter-spacing: 2px; }
         .login-subtitle { font-size: 2.5rem; color: var(--gris-claro); margin-bottom: 40px; font-weight: 400; border-bottom: 3px solid var(--marron);}
         .login-card { background: var(--blanco); border-radius: 20px; padding: 30px 25px; width: 100%; max-width: 360px; box-shadow: 0 10px 40px var(--sombra); }
@@ -109,7 +109,6 @@
         .timeline-item.llamada::before { background: var(--naranja); box-shadow: 0 0 0 2px var(--naranja); }
         .timeline-date { font-size: 0.8rem; color: var(--gris-claro); margin-bottom: 5px; }
         .timeline-content { color: var(--gris-oscuro); }
-        /* Clase para ocultar el login completamente */
         .login-hidden { display: none !important; visibility: hidden; height: 0; overflow: hidden; }
     </style>
 </head>
@@ -286,7 +285,7 @@
     </div>
 </div>
 
-<!-- MODALES (se mantienen igual) -->
+<!-- MODALES (Cliente, Seguimiento, Historial, WhatsApp, Promoción) -->
 <div class="modal-overlay" id="modalCliente">
     <div class="modal">
         <div class="modal-header"><div class="modal-title">Nuevo Cliente</div><button class="modal-close" onclick="app.cerrarModal('modalCliente')">&times;</button></div>
@@ -336,13 +335,6 @@
 <div class="modal-overlay" id="modalPromocion">
     <div class="modal">
         <div class="modal-header"><div class="modal-title">Promoción Especial</div><button class="modal-close" onclick="app.cerrarModal('modalPromocion')">&times;</button></div>
-        <!-- NUEVO SELECTOR DE SUCURSAL -->
-<div class="input-group">
-    <label>Sucursal</label>
-    <select id="promoSucursal" onchange="app.cargarOpcionesPromocion()">
-        <option value="">Seleccione sucursal...</option>
-    </select>
-</div>
         <div class="input-group"><label>Producto</label><select id="promoProducto" onchange="app.calcularPromocion()"><option value="">Selecciona producto</option></select></div>
         <div id="promoInfo" class="hidden">
             <div class="card" style="background: var(--crema);">
@@ -439,7 +431,6 @@ const app = {
 
     logout() { this.estado.vendedorActual = null; localStorage.removeItem('duava_sesion'); location.reload(); },
     mostrarApp() {
-        // Ocultar login de forma definitiva
         const loginEl = document.getElementById('loginScreen');
         loginEl.classList.add('login-hidden');
         loginEl.style.display = 'none';
@@ -487,7 +478,7 @@ const app = {
         c.innerHTML = alertas.length ? `<div class="alert-banner" onclick="app.showSection('clientes')"><div class="alert-count">${alertas.length}</div><div>clientes necesitan contacto (+20 días)</div></div>` : '';
     },
 
-    // ---- NUEVA VENTA (CON TONO) ----
+    // ---- NUEVA VENTA (CON LÓGICA DE LOTES CORREGIDA) ----
     async cargarProductosVenta() {
         const suc = document.getElementById('ventaSucursal').value;
         this.estado.sucursalVenta = suc;
@@ -522,49 +513,38 @@ const app = {
         document.getElementById('ventaCantidad').max = prod.stock;
         
         fetch(`${this.API_URL}?action=getLotesProducto&producto=${encodeURIComponent(prod.nombre)}&sucursal=${encodeURIComponent(this.estado.sucursalVenta)}`)
-.then(r => r.json()).then(data => {
-    const lotes = data.lotes || [];
-    this.estado.lotesProductoActual = lotes;
-    
-    // Verificar si hay algún lote con vencimiento próximo (≤90 días)
-    const tieneProximoVencer = lotes.some(l => l.diasVencimiento <= 90);
-    
-    if (lotes.length === 0) {
-        document.getElementById('ventaSelectorLote').classList.remove('hidden');
-        document.getElementById('ventaListaLotes').innerHTML = '<div style="padding:10px;color:#999">Sin lotes disponibles</div>';
-        this.estado.loteSeleccionado = null;
-    } else if (lotes.length === 1 && !tieneProximoVencer) {
-        // Un solo lote y no próximo a vencer: automático
-        document.getElementById('ventaSelectorLote').classList.add('hidden');
-        this.estado.loteSeleccionado = lotes[0];
-        document.getElementById('ventaLoteInfo').textContent = `Lote: ${lotes[0].loteId} | Vence: ${lotes[0].vencimiento} | $${lotes[0].costoReal}/u`;
-    } else if (lotes.length >= 2 && !tieneProximoVencer) {
-        // Varios lotes, ninguno próximo a vencer: seleccionar el más antiguo automáticamente
-        document.getElementById('ventaSelectorLote').classList.add('hidden');
-        // El backend ya los envía ordenados por fecha de creación (el más antiguo primero)
-        this.estado.loteSeleccionado = lotes[0];
-        document.getElementById('ventaLoteInfo').textContent = `Lote automático: ${lotes[0].loteId} | Vence: ${lotes[0].vencimiento} | $${lotes[0].costoReal}/u`;
-    } else {
-        // Hay lotes con vencimiento próximo: mostrar selector con todos
-        document.getElementById('ventaSelectorLote').classList.remove('hidden');
-        let html = '';
-        lotes.forEach((l, i) => {
-            const clase = i === 0 ? ' seleccionado' : '';
-            const badge = l.diasVencimiento <= 90 ? '<span class="lote-badge-prox">Vence en ' + l.diasVencimiento + 'd</span>' : '';
-            html += `<div class="lote-item${clase}" onclick="app.seleccionarLote('${l.loteId}')" id="lote-${l.loteId}">
-                <div>
-                    <strong>${l.loteId}</strong> | ${l.sucursal}
-                    <div class="lote-info">Vence: ${l.vencimiento} | Stock: ${l.cantidadRestante} | $${l.costoReal}/u</div>
-                </div>
-                ${badge}
-            </div>`;
+        .then(r => r.json()).then(data => {
+            const lotes = data.lotes || [];
+            this.estado.lotesProductoActual = lotes;
+            const cont = document.getElementById('ventaListaLotes');
+            const tieneProximoVencer = lotes.some(l => l.diasVencimiento <= 90);
+            
+            if (lotes.length === 0) {
+                cont.innerHTML = '<div style="padding:10px;color:#999">Sin lotes disponibles</div>';
+                document.getElementById('ventaSelectorLote').classList.remove('hidden');
+                this.estado.loteSeleccionado = null;
+            } else if (tieneProximoVencer) {
+                // Mostrar selector manual porque hay vencimiento próximo
+                document.getElementById('ventaSelectorLote').classList.remove('hidden');
+                cont.innerHTML = lotes.map((l, i) => `
+                    <div class="lote-item ${i===0 ? 'seleccionado' : ''}" onclick="app.seleccionarLote('${l.loteId}')" id="lote-${l.loteId}">
+                        <div>
+                            <strong>${l.loteId}</strong> | ${l.sucursal}
+                            <div class="lote-info">Vence: ${l.vencimiento} | Stock: ${l.cantidadRestante} | $${l.costoReal}/u</div>
+                        </div>
+                        ${l.diasVencimiento <= 90 ? '<span class="lote-badge-prox">Vence en ' + l.diasVencimiento + 'd</span>' : ''}
+                    </div>
+                `).join('');
+                this.estado.loteSeleccionado = lotes[0];
+                document.getElementById('ventaError').textContent = '⚠️ Hay productos próximos a vencer. Seleccione el lote manualmente.';
+            } else {
+                // Selección automática del más antiguo (ya ordenado por fecha de envío)
+                document.getElementById('ventaSelectorLote').classList.add('hidden');
+                this.estado.loteSeleccionado = lotes[0];
+                document.getElementById('ventaLoteInfo').textContent = `Lote automático: ${lotes[0].loteId} | Vence: ${lotes[0].vencimiento} | $${lotes[0].costoReal}/u`;
+                document.getElementById('ventaError').textContent = '';
+            }
         });
-        document.getElementById('ventaListaLotes').innerHTML = html;
-        this.estado.loteSeleccionado = lotes[0];
-        // Mostrar mensaje de alerta
-        document.getElementById('ventaError').textContent = '⚠️ Hay productos próximos a vencer. Seleccione el lote manualmente.';
-    }
-});
     },
 
     seleccionarLote(loteId) {
@@ -817,13 +797,10 @@ const app = {
         this.renderAlertas();
     },
 
-    // ---- PROMOCIONES (sin tienda, con tono) ----
+    // ---- PROMOCIONES ----
     mostrarModalPromocion(clienteNombre) {
         this.cerrarModal('modalWhatsApp');
         document.getElementById('modalPromocion').classList.add('active');
-        document.getElementById('promoSucursal').innerHTML = document.getElementById('ventaSucursal').innerHTML;
-        // Copiar las sucursales del selector de ventas
-        document.getElementById('promoSucursal').innerHTML = document.getElementById('ventaSucursal').innerHTML;
         this.clientePromoActual = this.datos.clientes.find(c => c.nombre === clienteNombre);
         const select = document.getElementById('promoProducto');
         select.innerHTML = '<option value="">Selecciona producto</option>';
@@ -884,74 +861,21 @@ const app = {
         const precio = this.promoProducto.precio;
         const descuento = this.promoDescuento;
         const precioFinal = precio * (1 - descuento / 100);
-        // Mensaje sin tienda
-        const msg = `Hola ${cliente ? cliente.nombre : 'Doctor/a'}, como miembro especial de nuestra comunidad, tenemos una promoción exclusiva para usted:\n\n🏷️ ${this.promoProducto.producto}\n💰 Precio regular: $${precio.toFixed(2)}\n✨ Con su descuento especial del ${descuento}% por ser miembro: Solo $${precioFinal.toFixed(2)}\n\n¿Le interesa? Escríbanos y le coordinamos la entrega.`;
+        const msg = `Hola ${cliente ? cliente.nombre : 'Doctor/a'}, como miembro especial de nuestra comunidad, tenemos una promoción exclusiva para usted:\n\n🏷️ ${this.promoProducto.producto}${this.promoProducto.tono ? ' ' + this.promoProducto.tono : ''}\n💰 Precio regular: $${precio.toFixed(2)}\n✨ Con su descuento especial del ${descuento}% por ser miembro: Solo $${precioFinal.toFixed(2)}\n\n¿Le interesa? Escríbanos y le coordinamos la entrega.`;
         document.getElementById('promoMensaje').value = msg;
     },
 
     enviarPromocion() {
         const cliente = this.clientePromoActual || this.clienteWhatsAppActual;
-        if (!cliente || !this.estado.promoSeleccionada) return;
+        if (!cliente || !this.promoProducto) return;
         const mensaje = document.getElementById('promoMensaje').value;
         this.whatsappCliente(cliente.whatsapp, mensaje);
         const precioFinal = this.promoProducto.precio * (1 - this.promoDescuento / 100);
-        this.guardarSeguimientoAuto(cliente.nombre, 'Mensaje promocional', `${this.estado.promoSeleccionada.nombre} - Desc. ${this.promoDescuento}% - Precio: $${precioFinal.toFixed(2)}`);
+        this.guardarSeguimientoAuto(cliente.nombre, 'Mensaje promocional', `${this.promoProducto.producto} - Desc. ${this.promoDescuento}% - Precio: $${precioFinal.toFixed(2)}`);
         this.cerrarModal('modalPromocion');
         alert('Promoción enviada y registrada');
     },
-cargarOpcionesPromocion() {
-    const suc = document.getElementById('promoSucursal').value;
-    const sel = document.getElementById('promoProducto');
-    sel.innerHTML = '<option value="">Cargando...</option>';
-    if (!suc) { sel.innerHTML = '<option value="">Primero seleccione sucursal</option>'; return; }
-    fetch(`${this.API_URL}?action=getOpcionesPromocion&sucursal=${encodeURIComponent(suc)}`)
-    .then(r => r.json())
-    .then(data => {
-        this.estado.opcionesPromo = data || [];
-        sel.innerHTML = '<option value="">Selecciona producto</option>';
-        this.estado.opcionesPromo.forEach((op, index) => {
-            const opt = document.createElement('option');
-            opt.value = index;
-            const estado = op.estado === 'En Transito' ? '🚚 En camino hacia ' + op.destino : '✅ Disponible';
-            opt.textContent = `${op.nombre}${op.tono ? ' ' + op.tono : ''} - $${op.precio.toFixed(2)} (${estado})`;
-            sel.appendChild(opt);
-        });
-        document.getElementById('promoInfo').classList.add('hidden');
-        this.promoProducto = null;
-    })
-    .catch(() => { sel.innerHTML = '<option value="">Error al cargar</option>'; });
-},
 
-calcularPromocion() {
-    const idx = document.getElementById('promoProducto').selectedIndex;
-    if (idx <= 0) {
-        document.getElementById('promoInfo').classList.add('hidden');
-        this.promoProducto = null;
-        return;
-    }
-    this.estado.promoSeleccionada = this.estado.opcionesPromo[idx - 1];
-    const precio = this.estado.promoSeleccionada.precio;
-    const descuento = this.promoDescuento;
-    const precioFinal = precio * (1 - descuento / 100);
-    document.getElementById('promoPrecioRegular').textContent = precio.toFixed(2);
-    document.getElementById('promoPrecioFinal').textContent = precioFinal.toFixed(2);
-    document.getElementById('promoInfo').classList.remove('hidden');
-    this.generarMensajePromocion();
-},
-
-generarMensajePromocion() {
-    const op = this.estado.promoSeleccionada;
-    if (!op) return;
-    const cliente = this.clientePromoActual || this.clienteWhatsAppActual;
-    const precio = op.precio;
-    const descuento = this.promoDescuento;
-    const precioFinal = precio * (1 - descuento / 100);
-    let msg = `Hola ${cliente ? cliente.nombre : 'Doctor/a'}, como miembro especial de nuestra comunidad, tenemos una promoción exclusiva para usted:\n\n🏷️ ${op.nombre}${op.tono ? ' ' + op.tono : ''}\n💰 Precio regular: $${precio.toFixed(2)}\n✨ Con su descuento especial del ${descuento}% por ser miembro: Solo $${precioFinal.toFixed(2)}\n\n¿Le interesa? Escríbanos y le coordinamos la entrega.`;
-    if (op.estado === 'En Transito') {
-        msg += `\n\n🚚 En camino hacia ${op.destino}. ¡Pronto disponible!`;
-    }
-    document.getElementById('promoMensaje').value = msg;
-},
     // ---- CLIENTES (guardar) ----
     async guardarCliente() {
         const nombre = document.getElementById('clienteNombre').value.trim();

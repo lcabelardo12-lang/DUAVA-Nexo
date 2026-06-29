@@ -522,32 +522,49 @@ const app = {
         document.getElementById('ventaCantidad').max = prod.stock;
         
         fetch(`${this.API_URL}?action=getLotesProducto&producto=${encodeURIComponent(prod.nombre)}&sucursal=${encodeURIComponent(this.estado.sucursalVenta)}`)
-        .then(r => r.json()).then(data => {
-            const lotes = data.lotes || [];
-            this.estado.lotesProductoActual = lotes;
-            const cont = document.getElementById('ventaListaLotes');
-            if (lotes.length === 0) {
-                cont.innerHTML = '<div style="padding:10px;color:#999">Sin lotes disponibles</div>';
-                document.getElementById('ventaSelectorLote').classList.remove('hidden');
-                this.estado.loteSeleccionado = null;
-            } else if (lotes.length === 1) {
-                document.getElementById('ventaSelectorLote').classList.add('hidden');
-                this.estado.loteSeleccionado = lotes[0];
-                document.getElementById('ventaLoteInfo').textContent = `Lote: ${lotes[0].loteId} | Vence: ${lotes[0].vencimiento} | $${lotes[0].costoReal}/u`;
-            } else {
-                document.getElementById('ventaSelectorLote').classList.remove('hidden');
-                cont.innerHTML = lotes.map((l, i) => `
-                    <div class="lote-item ${i===0 ? 'seleccionado' : ''}" onclick="app.seleccionarLote('${l.loteId}')" id="lote-${l.loteId}">
-                        <div>
-                            <strong>${l.loteId}</strong> | ${l.sucursal}
-                            <div class="lote-info">Vence: ${l.vencimiento} | Stock: ${l.cantidadRestante} | $${l.costoReal}/u</div>
-                        </div>
-                        ${l.diasVencimiento <= 90 ? '<span class="lote-badge-prox">Próximo</span>' : ''}
-                    </div>
-                `).join('');
-                this.estado.loteSeleccionado = lotes[0];
-            }
+.then(r => r.json()).then(data => {
+    const lotes = data.lotes || [];
+    this.estado.lotesProductoActual = lotes;
+    
+    // Verificar si hay algún lote con vencimiento próximo (≤90 días)
+    const tieneProximoVencer = lotes.some(l => l.diasVencimiento <= 90);
+    
+    if (lotes.length === 0) {
+        document.getElementById('ventaSelectorLote').classList.remove('hidden');
+        document.getElementById('ventaListaLotes').innerHTML = '<div style="padding:10px;color:#999">Sin lotes disponibles</div>';
+        this.estado.loteSeleccionado = null;
+    } else if (lotes.length === 1 && !tieneProximoVencer) {
+        // Un solo lote y no próximo a vencer: automático
+        document.getElementById('ventaSelectorLote').classList.add('hidden');
+        this.estado.loteSeleccionado = lotes[0];
+        document.getElementById('ventaLoteInfo').textContent = `Lote: ${lotes[0].loteId} | Vence: ${lotes[0].vencimiento} | $${lotes[0].costoReal}/u`;
+    } else if (lotes.length >= 2 && !tieneProximoVencer) {
+        // Varios lotes, ninguno próximo a vencer: seleccionar el más antiguo automáticamente
+        document.getElementById('ventaSelectorLote').classList.add('hidden');
+        // El backend ya los envía ordenados por fecha de creación (el más antiguo primero)
+        this.estado.loteSeleccionado = lotes[0];
+        document.getElementById('ventaLoteInfo').textContent = `Lote automático: ${lotes[0].loteId} | Vence: ${lotes[0].vencimiento} | $${lotes[0].costoReal}/u`;
+    } else {
+        // Hay lotes con vencimiento próximo: mostrar selector con todos
+        document.getElementById('ventaSelectorLote').classList.remove('hidden');
+        let html = '';
+        lotes.forEach((l, i) => {
+            const clase = i === 0 ? ' seleccionado' : '';
+            const badge = l.diasVencimiento <= 90 ? '<span class="lote-badge-prox">Vence en ' + l.diasVencimiento + 'd</span>' : '';
+            html += `<div class="lote-item${clase}" onclick="app.seleccionarLote('${l.loteId}')" id="lote-${l.loteId}">
+                <div>
+                    <strong>${l.loteId}</strong> | ${l.sucursal}
+                    <div class="lote-info">Vence: ${l.vencimiento} | Stock: ${l.cantidadRestante} | $${l.costoReal}/u</div>
+                </div>
+                ${badge}
+            </div>`;
         });
+        document.getElementById('ventaListaLotes').innerHTML = html;
+        this.estado.loteSeleccionado = lotes[0];
+        // Mostrar mensaje de alerta
+        document.getElementById('ventaError').textContent = '⚠️ Hay productos próximos a vencer. Seleccione el lote manualmente.';
+    }
+});
     },
 
     seleccionarLote(loteId) {

@@ -30,6 +30,7 @@
         .btn-login { width: 100%; padding: 16px; background: linear-gradient(135deg, var(--marron) 0%, var(--marron-oscuro) 100%); color: white; border: none; border-radius: 12px; font-size: 1.1rem; font-weight: 600; cursor: pointer; margin-top: 10px; }
         .login-error { color: var(--rojo-alerta); text-align: center; margin-top: 15px; font-size: 0.9rem; display: none; }
         .app-container { display: none; min-height: 100vh; padding-bottom: 80px; }
+        #loginScreen.hidden { display: none !important; }
         .app-header { background: linear-gradient(135deg, var(--marron-oscuro) 0%, var(--marron) 100%); color: white; padding: 15px 20px; position: sticky; top: 0; z-index: 100; box-shadow: 0 2px 20px var(--sombra); }
         .header-top { display: flex; justify-content: space-between; align-items: center; }
         .header-title { font-size: 1.4rem; font-weight: 700; letter-spacing: 1px; }
@@ -485,7 +486,7 @@ const app = {
         try {
             const resp = await fetch(`${this.API_URL}?action=getProductosConLotes&sucursal=${encodeURIComponent(suc)}`);
             const data = await resp.json();
-            this.estado.productosVenta = data.productos || [];
+            this.estado.productosVenta = data || [];
             sel.innerHTML = '<option value="">Seleccione producto...</option>';
             this.estado.productosVenta.forEach(p => {
                 if (p.stock > 0) sel.innerHTML += `<option value="${p.id}">${p.nombre} - $${p.precio}</option>`;
@@ -1328,11 +1329,12 @@ const app = {
 
     logout() { this.estado.vendedorActual = null; localStorage.removeItem('duava_sesion'); location.reload(); },
     mostrarApp() {
-        document.getElementById('loginScreen').style.display='none';
-        document.getElementById('appContainer').style.display='block';
-        document.getElementById('userName').textContent = this.estado.vendedorActual.nombre;
-        this.cargarDatos();
-    },
+    document.getElementById('loginScreen').classList.add('hidden');
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('appContainer').style.display = 'block';
+    document.getElementById('userName').textContent = this.estado.vendedorActual.nombre;
+    this.cargarDatos();
+},
 
     renderizarTodo() { this.renderClientes(); this.renderProductos(); this.renderSeguimiento(); this.renderAlertas(); this.renderSelects(); },
     showSection(id) {

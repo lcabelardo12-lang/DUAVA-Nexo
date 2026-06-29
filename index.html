@@ -332,10 +332,27 @@
     </div>
 </div>
 
+<!-- MODAL PROMOCION (RESTAURADO CON SUCURSAL, ESTADOS Y MENSAJE) -->
 <div class="modal-overlay" id="modalPromocion">
     <div class="modal">
         <div class="modal-header"><div class="modal-title">Promoción Especial</div><button class="modal-close" onclick="app.cerrarModal('modalPromocion')">&times;</button></div>
-        <div class="input-group"><label>Producto</label><select id="promoProducto" onchange="app.calcularPromocion()"><option value="">Selecciona producto</option></select></div>
+        
+        <!-- Sucursal -->
+        <div class="input-group">
+            <label>Sucursal</label>
+            <select id="promoSucursal" onchange="app.cargarOpcionesPromocion()">
+                <option value="">Seleccione sucursal...</option>
+            </select>
+        </div>
+
+        <!-- Producto -->
+        <div class="input-group">
+            <label>Producto</label>
+            <select id="promoProducto" onchange="app.calcularPromocion()">
+                <option value="">Primero seleccione sucursal</option>
+            </select>
+        </div>
+        
         <div id="promoInfo" class="hidden">
             <div class="card" style="background: var(--crema);">
                 <div style="font-size: 0.9rem; color: var(--gris-medio);">Precio regular:</div>
@@ -344,6 +361,7 @@
                 <div style="font-size: 1.4rem; color: var(--marron); font-weight: 700;">$<span id="promoPrecioFinal">0</span></div>
             </div>
         </div>
+        
         <div class="mt-10">
             <label style="display:block;margin-bottom:8px;color:var(--gris-medio);font-size:0.9rem;">Descuento especial miembro</label>
             <div class="discount-selector">
@@ -353,6 +371,7 @@
                 <div class="discount-custom"><input type="number" id="promoDescuentoCustom" placeholder="%" min="0" max="100" onchange="app.setPromoDescuentoCustom()"><span>%</span></div>
             </div>
         </div>
+        
         <div class="input-group mt-10"><label>Mensaje (puedes editarlo)</label><textarea id="promoMensaje" rows="6" style="font-size: 0.9rem;"></textarea></div>
         <button class="btn btn-whatsapp w-full mt-10" onclick="app.enviarPromocion()">Enviar Promoción por WhatsApp</button>
     </div>
@@ -361,7 +380,7 @@
 <script>
 const app = {
     datos: { vendedores:[], clientes:[], productos:[], ventas:[], seguimientos:[] },
-    estado: { vendedorActual:null, sucursalVenta:'', productosVenta:[], lotesProductoActual:[], loteSeleccionado:null, descuentoVenta:0 },
+    estado: { vendedorActual:null, sucursalVenta:'', productosVenta:[], lotesProductoActual:[], loteSeleccionado:null, descuentoVenta:0, opcionesPromo:[], promoSeleccionada:null },
     promoProducto: null,
     promoDescuento: 9,
     API_URL: 'https://script.google.com/macros/s/AKfycbxTRQ9z9FYrg9ya8ax8vIJco77ktkDUkf22lohUD-pt0um-qhwIAsB0tKWa8vb_Hnhv/exec',
@@ -524,7 +543,6 @@ const app = {
                 document.getElementById('ventaSelectorLote').classList.remove('hidden');
                 this.estado.loteSeleccionado = null;
             } else if (tieneProximoVencer) {
-                // Mostrar selector manual porque hay vencimiento próximo
                 document.getElementById('ventaSelectorLote').classList.remove('hidden');
                 cont.innerHTML = lotes.map((l, i) => `
                     <div class="lote-item ${i===0 ? 'seleccionado' : ''}" onclick="app.seleccionarLote('${l.loteId}')" id="lote-${l.loteId}">
@@ -538,7 +556,6 @@ const app = {
                 this.estado.loteSeleccionado = lotes[0];
                 document.getElementById('ventaError').textContent = '⚠️ Hay productos próximos a vencer. Seleccione el lote manualmente.';
             } else {
-                // Selección automática del más antiguo (ya ordenado por fecha de envío)
                 document.getElementById('ventaSelectorLote').classList.add('hidden');
                 this.estado.loteSeleccionado = lotes[0];
                 document.getElementById('ventaLoteInfo').textContent = `Lote automático: ${lotes[0].loteId} | Vence: ${lotes[0].vencimiento} | $${lotes[0].costoReal}/u`;
@@ -797,36 +814,54 @@ const app = {
         this.renderAlertas();
     },
 
-    // ---- PROMOCIONES ----
+    // ---- PROMOCIONES (MEJORADAS) ----
     mostrarModalPromocion(clienteNombre) {
         this.cerrarModal('modalWhatsApp');
         document.getElementById('modalPromocion').classList.add('active');
+        // Copiar sucursales del selector de ventas
+        document.getElementById('promoSucursal').innerHTML = document.getElementById('ventaSucursal').innerHTML;
         this.clientePromoActual = this.datos.clientes.find(c => c.nombre === clienteNombre);
-        const select = document.getElementById('promoProducto');
-        select.innerHTML = '<option value="">Selecciona producto</option>';
-        (this.datos.productos || []).forEach((p, index) => {
-            const opt = document.createElement('option');
-            opt.value = index;
-            opt.textContent = p.producto + (p.tono ? ' ' + p.tono : '') + ' - $' + p.precio.toFixed(2);
-            select.appendChild(opt);
-        });
         document.getElementById('promoInfo').classList.add('hidden');
         this.promoDescuento = 9;
-        this.promoProducto = null;
+        this.estado.promoSeleccionada = null;
         this.actualizarBotonesPromo();
         document.getElementById('promoMensaje').value = '';
+        // Limpiar selector de producto
+        document.getElementById('promoProducto').innerHTML = '<option value="">Primero seleccione sucursal</option>';
+    },
+
+    cargarOpcionesPromocion() {
+        const suc = document.getElementById('promoSucursal').value;
+        const sel = document.getElementById('promoProducto');
+        sel.innerHTML = '<option value="">Cargando...</option>';
+        if (!suc) { sel.innerHTML = '<option value="">Primero seleccione sucursal</option>'; return; }
+        fetch(`${this.API_URL}?action=getOpcionesPromocion&sucursal=${encodeURIComponent(suc)}`)
+        .then(r => r.json())
+        .then(data => {
+            this.estado.opcionesPromo = data || [];
+            sel.innerHTML = '<option value="">Selecciona producto</option>';
+            this.estado.opcionesPromo.forEach((op, index) => {
+                const opt = document.createElement('option');
+                opt.value = index;
+                const estado = op.estado === 'En Transito' ? '🚚 En camino hacia ' + op.destino : '✅ Disponible';
+                opt.textContent = `${op.nombre}${op.tono ? ' ' + op.tono : ''} - $${op.precio.toFixed(2)} (${estado})`;
+                sel.appendChild(opt);
+            });
+            document.getElementById('promoInfo').classList.add('hidden');
+            this.estado.promoSeleccionada = null;
+        })
+        .catch(() => { sel.innerHTML = '<option value="">Error al cargar</option>'; });
     },
 
     calcularPromocion() {
-        const select = document.getElementById('promoProducto');
-        const idx = select.selectedIndex;
+        const idx = document.getElementById('promoProducto').selectedIndex;
         if (idx <= 0) {
             document.getElementById('promoInfo').classList.add('hidden');
-            this.promoProducto = null;
+            this.estado.promoSeleccionada = null;
             return;
         }
-        this.promoProducto = this.datos.productos[idx - 1];
-        const precio = this.promoProducto.precio;
+        this.estado.promoSeleccionada = this.estado.opcionesPromo[idx - 1];
+        const precio = this.estado.promoSeleccionada.precio;
         const descuento = this.promoDescuento;
         const precioFinal = precio * (1 - descuento / 100);
         document.getElementById('promoPrecioRegular').textContent = precio.toFixed(2);
@@ -839,13 +874,13 @@ const app = {
         this.promoDescuento = pct;
         document.getElementById('promoDescuentoCustom').value = '';
         this.actualizarBotonesPromo();
-        if (this.promoProducto) this.calcularPromocion();
+        if (this.estado.promoSeleccionada) this.calcularPromocion();
     },
 
     setPromoDescuentoCustom() {
         this.promoDescuento = parseFloat(document.getElementById('promoDescuentoCustom').value) || 0;
         this.actualizarBotonesPromo();
-        if (this.promoProducto) this.calcularPromocion();
+        if (this.estado.promoSeleccionada) this.calcularPromocion();
     },
 
     actualizarBotonesPromo() {
@@ -856,22 +891,27 @@ const app = {
     },
 
     generarMensajePromocion() {
-        if (!this.promoProducto) return;
+        const op = this.estado.promoSeleccionada;
+        if (!op) return;
         const cliente = this.clientePromoActual || this.clienteWhatsAppActual;
-        const precio = this.promoProducto.precio;
+        const precio = op.precio;
         const descuento = this.promoDescuento;
         const precioFinal = precio * (1 - descuento / 100);
-        const msg = `Hola ${cliente ? cliente.nombre : 'Doctor/a'}, como miembro especial de nuestra comunidad, tenemos una promoción exclusiva para usted:\n\n🏷️ ${this.promoProducto.producto}${this.promoProducto.tono ? ' ' + this.promoProducto.tono : ''}\n💰 Precio regular: $${precio.toFixed(2)}\n✨ Con su descuento especial del ${descuento}% por ser miembro: Solo $${precioFinal.toFixed(2)}\n\n¿Le interesa? Escríbanos y le coordinamos la entrega.`;
+        let msg = `Hola ${cliente ? cliente.nombre : 'Doctor/a'}, como miembro especial de nuestra comunidad, tenemos una promoción exclusiva para usted:\n\n🏷️ ${op.nombre}${op.tono ? ' ' + op.tono : ''}\n💰 Precio regular: $${precio.toFixed(2)}\n✨ Con su descuento especial del ${descuento}% por ser miembro: Solo $${precioFinal.toFixed(2)}\n\n¿Le interesa? Escríbanos y le coordinamos la entrega.`;
+        if (op.estado === 'En Transito') {
+            msg += `\n\n🚚 En camino hacia ${op.destino}. ¡Pronto disponible!`;
+        }
         document.getElementById('promoMensaje').value = msg;
     },
 
     enviarPromocion() {
         const cliente = this.clientePromoActual || this.clienteWhatsAppActual;
-        if (!cliente || !this.promoProducto) return;
+        const op = this.estado.promoSeleccionada;
+        if (!cliente || !op) return;
         const mensaje = document.getElementById('promoMensaje').value;
         this.whatsappCliente(cliente.whatsapp, mensaje);
-        const precioFinal = this.promoProducto.precio * (1 - this.promoDescuento / 100);
-        this.guardarSeguimientoAuto(cliente.nombre, 'Mensaje promocional', `${this.promoProducto.producto} - Desc. ${this.promoDescuento}% - Precio: $${precioFinal.toFixed(2)}`);
+        const precioFinal = op.precio * (1 - this.promoDescuento / 100);
+        this.guardarSeguimientoAuto(cliente.nombre, 'Mensaje promocional', `${op.nombre} - Desc. ${this.promoDescuento}% - Precio: $${precioFinal.toFixed(2)}`);
         this.cerrarModal('modalPromocion');
         alert('Promoción enviada y registrada');
     },

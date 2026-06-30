@@ -501,6 +501,7 @@ const app = {
     async cargarProductosVenta() {
         const suc = document.getElementById('ventaSucursal').value;
         this.estado.sucursalVenta = suc;
+       this.estado.tiendaVenta = ''; // se llenará al elegir el producto
         const sel = document.getElementById('ventaProducto');
         sel.innerHTML = '<option value="">Cargando...</option>';
         if (!suc) { sel.innerHTML = '<option value="">Primero seleccione sucursal</option>'; return; }
@@ -523,6 +524,7 @@ const app = {
         const prodId = document.getElementById('ventaProducto').value;
         if (!prodId) { this.limpiarDetallesProducto(); return; }
         const prod = this.estado.productosVenta.find(p => p.id === prodId);
+        this.estado.tiendaVenta = prod.tienda;
         if (!prod) return;
         document.getElementById('ventaStockDisp').textContent = prod.stock;
         const descuento = this.estado.descuentoVenta || 0;
@@ -641,7 +643,7 @@ const app = {
                 total: (precioVenta * cantidad).toFixed(2),
                 motivo: motivo || (tipoVenta !== 'Normal' ? tipoVenta : ''),
                 vendedor: this.estado.vendedorActual.nombre,
-                tienda: this.estado.sucursalVenta,
+                tienda: this.estado.tiendaVenta,
                 loteId: lote.loteId,
                 precioVenta: precioVenta,
                 tipoVenta: tipoVenta,
